@@ -3,11 +3,11 @@ export interface Certificate {
   name: string;
   issuer: string;
   issueDate: string;
-  credentialId: string;
+  credentialId?: string; // Optional
   imageUrl?: string;
   verificationUrl?: string;
-  description: string;
-  skills: string[];
+  description?: string; // Optional
+  skills?: string[]; // Optional
   categories: ('backend' | 'frontend' | 'devops' | 'cloud' | 'general')[];
   featured: boolean;
   expiryDate?: string;
@@ -32,29 +32,29 @@ export const certificates: Certificate[] = [
   },
   {
     id: '2',
-    name: 'Node.js Application Development',
-    issuer: 'OpenJS Foundation',
-    issueDate: '2024-01',
-    credentialId: 'NODEJS-DEV-2024-456',
+    name: 'Bangkit 2024 Batch 2 Certificate',
+    issuer: 'Bangkit led by Google, Goto, and Traveloka',
+    issueDate: 'Jan 2025',
+    credentialId: 'BA24/GRAD/XXIV-01/C272B4KY0010',
     imageUrl: '/assets/certificates/imphnenSertificated.jpg',
     verificationUrl: 'https://openjsf.org/certification/nodejs-dev-456',
-    description: 'Demonstrates proficiency in building scalable server-side applications using Node.js and related technologies.',
-    skills: ['Node.js', 'Express.js', 'REST APIs', 'JavaScript'],
+    description: 'Graduated as a Cloud Computing cohort.',
+    skills: ['Node.js', 'Express.js', 'REST APIs', 'JavaScript', 'GCP', 'Docker', 'team work', 'Problem Solving'],
     categories: ['backend'],
     featured: true,
     status: 'lifetime'
   },
   {
     id: '3',
-    name: 'MongoDB Certified Developer Associate',
-    issuer: 'MongoDB Inc.',
-    issueDate: '2023-11',
-    credentialId: 'MDB-DEV-2023-789',
+    name: 'Mahasiswa Peserta MSIB Batch 7',
+    issuer: 'Kampus Merdeka.',
+    issueDate: 'Jan 2025',
+    credentialId: '9923529/13020220166',
     imageUrl: '/assets/certificates/imphnenSertificated.jpg',
     verificationUrl: 'https://university.mongodb.com/certification/developer/789',
-    description: 'Validates skills in MongoDB database design, development, and optimization for modern applications.',
-    skills: ['MongoDB', 'Database Design', 'Aggregation', 'Indexing'],
-    categories: ['backend', 'devops'],
+    // description: 'Tidak ada deskripsi', // Optional - bisa di-comment atau dihapus
+    // skills: [], // Optional - bisa di-comment atau dihapus
+    categories: ['general'],
     featured: true,
     status: 'lifetime'
   },

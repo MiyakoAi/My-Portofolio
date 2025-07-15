@@ -58,7 +58,8 @@ console.log("Certifications showcase ready!");`;
       const matchesCategory = selectedCategory === 'all' || cert.categories.includes(selectedCategory);
       const matchesSearch = cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            cert.issuer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           cert.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
+                           (cert.description && cert.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                           (cert.skills && cert.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())));
       return matchesCategory && matchesSearch;
     });
 
@@ -255,7 +256,7 @@ console.log("Certifications showcase ready!");`;
                 </div>
 
                 <p className="text-gray-300 text-sm mb-4 line-clamp-2">
-                  {cert.description}
+                  {cert.description || 'No description available'}
                 </p>
 
                 {/* Certificate Details */}
@@ -269,29 +270,39 @@ console.log("Certifications showcase ready!");`;
                       {getStatusIcon(cert.status)} {cert.status.charAt(0).toUpperCase() + cert.status.slice(1)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Award className="w-3 h-3" />
-                    <span className="font-mono">ID: {cert.credentialId}</span>
-                  </div>
+                  {cert.credentialId && (
+                    <div className="flex items-center gap-1">
+                      <Award className="w-3 h-3" />
+                      <span className="font-mono">ID: {cert.credentialId}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Skills Tags */}
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {cert.skills.slice(0, 3).map((skill) => (
-                    <span
-                      key={skill}
-                      className="px-2 py-1 bg-terminal-border text-xs rounded font-mono text-terminal-blue flex items-center gap-1"
-                    >
-                      <TechIcon 
-                        technology={skill} 
-                        size="sm"
-                      />
-                      {skill}
-                    </span>
-                  ))}
-                  {cert.skills.length > 3 && (
+                  {cert.skills && cert.skills.length > 0 ? (
+                    <>
+                      {cert.skills.slice(0, 3).map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2 py-1 bg-terminal-border text-xs rounded font-mono text-terminal-blue flex items-center gap-1"
+                        >
+                          <TechIcon 
+                            technology={skill} 
+                            size="sm"
+                          />
+                          {skill}
+                        </span>
+                      ))}
+                      {cert.skills.length > 3 && (
+                        <span className="px-2 py-1 bg-gray-700 text-xs rounded font-mono text-gray-400">
+                          +{cert.skills.length - 3}
+                        </span>
+                      )}
+                    </>
+                  ) : (
                     <span className="px-2 py-1 bg-gray-700 text-xs rounded font-mono text-gray-400">
-                      +{cert.skills.length - 3}
+                      No skills listed
                     </span>
                   )}
                 </div>
@@ -439,22 +450,24 @@ console.log("Certifications showcase ready!");`;
                     </div>
 
                     {/* Credential ID */}
-                    <div>
-                      <h4 className="text-terminal-yellow font-semibold mb-2">Credential ID</h4>
-                      <div className="flex items-center gap-2 p-3 bg-gray-800 rounded font-mono text-sm">
-                        <span className="flex-1">{selectedCertificate.credentialId}</span>
-                        <button
-                          onClick={() => copyToClipboard(selectedCertificate.credentialId, 'credential')}
-                          className="p-1 hover:bg-gray-700 rounded transition-colors"
-                        >
-                          {copiedField === 'credential' ? (
-                            <Check className="w-4 h-4 text-terminal-green" />
-                          ) : (
-                            <Copy className="w-4 h-4 text-gray-400" />
-                          )}
-                        </button>
+                    {selectedCertificate.credentialId && (
+                      <div>
+                        <h4 className="text-terminal-yellow font-semibold mb-2">Credential ID</h4>
+                        <div className="flex items-center gap-2 p-3 bg-gray-800 rounded font-mono text-sm">
+                          <span className="flex-1">{selectedCertificate.credentialId}</span>
+                          <button
+                            onClick={() => copyToClipboard(selectedCertificate.credentialId!, 'credential')}
+                            className="p-1 hover:bg-gray-700 rounded transition-colors"
+                          >
+                            {copiedField === 'credential' ? (
+                              <Check className="w-4 h-4 text-terminal-green" />
+                            ) : (
+                              <Copy className="w-4 h-4 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Skills & Description */}
@@ -462,7 +475,7 @@ console.log("Certifications showcase ready!");`;
                     <div>
                       <h4 className="text-terminal-yellow font-semibold mb-2">Description</h4>
                       <p className="text-gray-300 leading-relaxed text-sm">
-                        {selectedCertificate.description}
+                        {selectedCertificate.description || 'No description available'}
                       </p>
                     </div>
 
@@ -486,14 +499,20 @@ console.log("Certifications showcase ready!");`;
                     <div>
                       <h4 className="text-terminal-yellow font-semibold mb-2">Skills Covered</h4>
                       <div className="flex flex-wrap gap-2">
-                        {selectedCertificate.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="px-3 py-1 bg-terminal-border rounded-full text-sm font-mono text-terminal-blue"
-                          >
-                            {skill}
+                        {selectedCertificate.skills && selectedCertificate.skills.length > 0 ? (
+                          selectedCertificate.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-3 py-1 bg-terminal-border rounded-full text-sm font-mono text-terminal-blue"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="px-3 py-1 bg-gray-700 rounded-full text-sm font-mono text-gray-400">
+                            No skills listed
                           </span>
-                        ))}
+                        )}
                       </div>
                     </div>
                   </div>
@@ -533,7 +552,7 @@ console.log("Certifications showcase ready!");`;
                 {/* Terminal Output */}
                 <div className="bg-gray-800 border border-terminal-border rounded-lg p-4">
                   <div className="font-mono text-sm">
-                    <div className="text-terminal-green">$ verify --certificate {selectedCertificate.credentialId}</div>
+                    <div className="text-terminal-green">$ verify --certificate {selectedCertificate.credentialId || 'N/A'}</div>
                     <div className="text-gray-300">Credential verified ✅</div>
                     <div className="text-gray-300">Issuer: {selectedCertificate.issuer}</div>
                     <div className="text-gray-300">Status: {selectedCertificate.status}</div>

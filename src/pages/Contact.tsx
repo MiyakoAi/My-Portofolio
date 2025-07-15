@@ -16,7 +16,7 @@ const Contact: React.FC = () => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const contactCode = `// Contact Information - Always Open for Opportunities
+  const contactCode = `// Contact Information
 const contactInfo = {
   developer: "MiyakoAi",
   email: "${personalInfo.email}",
@@ -29,22 +29,18 @@ const contactInfo = {
   socialLinks: {
     github: "${personalInfo.github}",
     linkedin: "${personalInfo.linkedin}",
-    portfolio: "https://miyakoai.dev"
   },
   
   availability: {
-    freelance: true,
-    fullTime: "open to discuss",
-    collaboration: true,
-    mentoring: true
+    freelance: false,
+    fullTime: "false",
+    collaboration: false,
+    mentoring: false
   },
   
   interests: [
     "Backend API development",
     "System architecture design",
-    "Open source contributions",
-    "Technical writing",
-    "Knowledge sharing"
   ]
 };
 
@@ -233,11 +229,14 @@ console.log("Ready to collaborate");`;
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Freelance Projects:</span>
-                <span className="text-terminal-green">Available</span>
+                {/* <span className="text-terminal-green">Available</span> */}
+                <span className="text-terminal-red">Not Available</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Full-time Opportunities:</span>
-                <span className="text-terminal-yellow">Open to Discuss</span>
+                {/* <span className="text-terminal-yellow">Open to Discuss</span> */}
+                <span className="text-terminal-red">Not Available</span>
+
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Response Time:</span>
