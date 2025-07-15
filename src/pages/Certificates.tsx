@@ -6,7 +6,7 @@ import CodeBlock from '../components/ui/CodeBlock';
 import TechIcon from '../components/ui/TechIcon';
 
 const Certificates: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'backend' | 'frontend' | 'devops' | 'cloud' | 'general'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -55,7 +55,7 @@ console.log("Certifications showcase ready!");`;
 
   const sortedAndFilteredCertificates = useMemo(() => {
     const filtered = certificates.filter(cert => {
-      const matchesCategory = selectedCategory === 'all' || cert.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'all' || cert.categories.includes(selectedCategory);
       const matchesSearch = cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            cert.issuer.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            cert.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -188,7 +188,7 @@ console.log("Certifications showcase ready!");`;
             {certificateCategories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => setSelectedCategory(category.id as any)}
                 className={`px-4 py-2 rounded-lg font-mono text-sm transition-colors flex items-center gap-2 ${
                   selectedCategory === category.id
                     ? 'bg-terminal-green text-black'
@@ -464,6 +464,23 @@ console.log("Certifications showcase ready!");`;
                       <p className="text-gray-300 leading-relaxed text-sm">
                         {selectedCertificate.description}
                       </p>
+                    </div>
+
+                    <div>
+                      <h4 className="text-terminal-yellow font-semibold mb-2">Categories</h4>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {selectedCertificate.categories.map((category) => {
+                          const categoryInfo = certificateCategories.find(c => c.id === category);
+                          return (
+                            <span
+                              key={category}
+                              className="px-3 py-1 bg-gray-800 text-sm rounded font-mono text-gray-300 flex items-center gap-1"
+                            >
+                              {categoryInfo?.icon} {categoryInfo?.name}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     <div>

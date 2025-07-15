@@ -8,7 +8,7 @@ export interface Certificate {
   verificationUrl?: string;
   description: string;
   skills: string[];
-  category: 'backend' | 'frontend' | 'devops' | 'cloud' | 'database' | 'general';
+  categories: ('backend' | 'frontend' | 'devops' | 'cloud' | 'general')[];
   featured: boolean;
   expiryDate?: string;
   status: 'active' | 'expired' | 'lifetime';
@@ -25,7 +25,7 @@ export const certificates: Certificate[] = [
     verificationUrl: 'https://www.credly.com/badges/aws-saa-2024-001',
     description: 'Just FUN!!!.',
     skills: ['JavaScript', 'Python', 'React', 'Automation'],
-    category: 'cloud',
+    categories: ['cloud', 'general'],
     featured: true,
     expiryDate: '2027-03',
     status: 'active'
@@ -40,7 +40,7 @@ export const certificates: Certificate[] = [
     verificationUrl: 'https://openjsf.org/certification/nodejs-dev-456',
     description: 'Demonstrates proficiency in building scalable server-side applications using Node.js and related technologies.',
     skills: ['Node.js', 'Express.js', 'REST APIs', 'JavaScript'],
-    category: 'backend',
+    categories: ['backend'],
     featured: true,
     status: 'lifetime'
   },
@@ -54,7 +54,7 @@ export const certificates: Certificate[] = [
     verificationUrl: 'https://university.mongodb.com/certification/developer/789',
     description: 'Validates skills in MongoDB database design, development, and optimization for modern applications.',
     skills: ['MongoDB', 'Database Design', 'Aggregation', 'Indexing'],
-    category: 'database',
+    categories: ['backend', 'devops'],
     featured: true,
     status: 'lifetime'
   },
@@ -68,7 +68,7 @@ export const certificates: Certificate[] = [
     verificationUrl: 'https://success.docker.com/certification/dca-321',
     description: 'Demonstrates expertise in containerization, Docker orchestration, and container security practices.',
     skills: ['Docker', 'Containerization', 'Microservices', 'DevOps'],
-    category: 'devops',
+    categories: ['devops', 'cloud'],
     featured: false,
     expiryDate: '2025-09',
     status: 'active'
@@ -83,7 +83,7 @@ export const certificates: Certificate[] = [
     verificationUrl: 'https://www.postgresql.org/certification/654',
     description: 'Validates comprehensive knowledge of PostgreSQL database administration and advanced SQL techniques.',
     skills: ['PostgreSQL', 'SQL', 'Database Administration', 'Performance Tuning'],
-    category: 'database',
+    categories: ['backend'],
     featured: false,
     status: 'lifetime'
   },
@@ -97,7 +97,7 @@ export const certificates: Certificate[] = [
     verificationUrl: 'https://www.freecodecamp.org/certification/miyakoai/javascript-algorithms-and-data-structures',
     description: 'Comprehensive certification covering JavaScript fundamentals, ES6+, algorithms, and data structures.',
     skills: ['JavaScript', 'Algorithms', 'Data Structures', 'ES6+'],
-    category: 'general',
+    categories: ['general', 'frontend'],
     featured: false,
     status: 'lifetime'
   }
@@ -105,12 +105,11 @@ export const certificates: Certificate[] = [
 
 export const certificateCategories = [
   { id: 'all', name: 'All Certificates', icon: '🎓', count: certificates.length },
-  { id: 'backend', name: 'Backend', icon: '⚙️', count: certificates.filter(c => c.category === 'backend').length },
-  { id: 'cloud', name: 'Cloud', icon: '☁️', count: certificates.filter(c => c.category === 'cloud').length },
-  { id: 'database', name: 'Database', icon: '🗄️', count: certificates.filter(c => c.category === 'database').length },
-  { id: 'devops', name: 'DevOps', icon: '🔧', count: certificates.filter(c => c.category === 'devops').length },
-  { id: 'frontend', name: 'Frontend', icon: '🎨', count: certificates.filter(c => c.category === 'frontend').length },
-  { id: 'general', name: 'General', icon: '📚', count: certificates.filter(c => c.category === 'general').length }
+  { id: 'backend', name: 'Backend', icon: '⚙️', count: certificates.filter(c => c.categories.includes('backend')).length },
+  { id: 'cloud', name: 'Cloud', icon: '☁️', count: certificates.filter(c => c.categories.includes('cloud')).length },
+  { id: 'devops', name: 'DevOps', icon: '🔧', count: certificates.filter(c => c.categories.includes('devops')).length },
+  { id: 'frontend', name: 'Frontend', icon: '🎨', count: certificates.filter(c => c.categories.includes('frontend')).length },
+  { id: 'general', name: 'General', icon: '📚', count: certificates.filter(c => c.categories.includes('general')).length }
 ];
 
 export const getCertificateStats = () => {
