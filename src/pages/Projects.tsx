@@ -4,21 +4,46 @@ import { Search, ExternalLink, Github, Calendar } from 'lucide-react';
 import { projects, projectCategories } from '../constants/projects';
 import type { Project } from '../constants/projects';
 import TechIcon from '../components/ui/TechIcon';
+import ProjectCarousel from '../components/ui/ProjectCarousel';
 
 const Projects: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'name'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  const filteredProjects = useMemo(() => {
-    return projects.filter(project => {
-      const matchesCategory = selectedCategory === 'all' || project.category === selectedCategory;
+  const sortedAndFilteredProjects = useMemo(() => {
+    const filtered = projects.filter(project => {
+      const matchesCategory = selectedCategory === 'all' || 
+                             project.categories.includes(selectedCategory as any);
       const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            project.technologies.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()));
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchTerm]);
+
+    return filtered.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'date':
+          const dateA = new Date(a.startDate).getTime();
+          const dateB = new Date(b.startDate).getTime();
+          comparison = dateA - dateB;
+          break;
+        case 'status':
+          const statusOrder = { 'completed': 0, 'in-progress': 1, 'planning': 2 };
+          comparison = statusOrder[a.status] - statusOrder[b.status];
+          break;
+        case 'name':
+          comparison = a.title.localeCompare(b.title);
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  }, [selectedCategory, searchTerm, sortBy, sortOrder]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -70,27 +95,51 @@ const Projects: React.FC = () => {
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-2">
-          {projectCategories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-lg font-mono text-sm transition-colors ${
-                selectedCategory === category.id
-                  ? 'bg-terminal-green text-black'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
+        <div className="flex flex-wrap gap-2 justify-between items-center">
+          <div className="flex flex-wrap gap-2">
+            {projectCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 rounded-lg font-mono text-sm transition-colors ${
+                  selectedCategory === category.id
+                    ? 'bg-terminal-green text-black'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {category.icon} {category.name}
+              </button>
+            ))}
+          </div>
+          
+          {/* Sort Controls */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-400">Sort by:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-gray-800 border border-terminal-border rounded px-3 py-1 text-sm text-gray-300 focus:border-terminal-green focus:outline-none"
             >
-              {category.icon} {category.name}
+              <option value="date">Date</option>
+              <option value="status">Status</option>
+              <option value="name">Name</option>
+            </select>
+            
+            <button
+              onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+              className="px-3 py-1 bg-gray-800 border border-terminal-border rounded text-sm hover:bg-gray-700 transition-colors flex items-center gap-1"
+              title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
             </button>
-          ))}
+          </div>
         </div>
       </div>
 
       {/* Projects Grid */}
       <AnimatePresence>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredProjects.map((project, index) => (
+          {sortedAndFilteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
               layout
@@ -102,14 +151,21 @@ const Projects: React.FC = () => {
               onClick={() => setSelectedProject(project)}
             >
               {/* Project Card Header */}
-              <div className="p-6 border-b border-terminal-border">
+              <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-xl font-semibold text-terminal-green group-hover:text-terminal-yellow transition-colors">
                     {project.title}
                   </h3>
-                  {project.featured && (
-                    <span className="text-yellow-400 text-lg">⭐</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {project.imageUrls && project.imageUrls.length > 0 && (
+                      <span className="text-xs bg-terminal-green bg-opacity-20 text-terminal-green px-2 py-1 rounded border border-terminal-green border-opacity-30">
+                        📷 {project.imageUrls.length} image{project.imageUrls.length > 1 ? 's' : ''}
+                      </span>
+                    )}
+                    {project.featured && (
+                      <span className="text-yellow-400 text-lg">⭐</span>
+                    )}
+                  </div>
                 </div>
                 
                 <p className="text-gray-300 text-sm mb-4 line-clamp-2">
@@ -178,7 +234,7 @@ const Projects: React.FC = () => {
       </AnimatePresence>
 
       {/* No Results */}
-      {filteredProjects.length === 0 && (
+      {sortedAndFilteredProjects.length === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -224,6 +280,17 @@ const Projects: React.FC = () => {
 
               {/* Modal Content */}
               <div className="p-6 space-y-6">
+                {/* Project Images Carousel in Modal */}
+                {selectedProject.imageUrls && selectedProject.imageUrls.length > 0 && (
+                  <div className="mb-6">
+                    <ProjectCarousel 
+                      images={selectedProject.imageUrls} 
+                      className="h-64"
+                      autoSlide={false}
+                    />
+                  </div>
+                )}
+
                 {/* Project Info */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
@@ -233,8 +300,17 @@ const Projects: React.FC = () => {
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Category:</span>
-                    <span className="ml-2 text-terminal-blue">{selectedProject.category}</span>
+                    <span className="text-gray-400">Categories:</span>
+                    <div className="ml-2 flex flex-wrap gap-1 mt-1">
+                      {selectedProject.categories.map((category) => (
+                        <span
+                          key={category}
+                          className="px-2 py-1 bg-terminal-blue bg-opacity-20 text-terminal-blue text-xs rounded border border-terminal-blue border-opacity-30"
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <span className="text-gray-400">Timeline:</span>

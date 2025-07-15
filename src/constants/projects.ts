@@ -4,12 +4,12 @@ export interface Project {
   description: string;
   longDescription: string;
   technologies: string[];
-  category: 'web' | 'api' | 'mobile' | 'tool' | 'other';
+  categories: ('web' | 'api' | 'mobile' | 'tool' | 'other')[];
   status: 'completed' | 'in-progress' | 'planning';
   featured: boolean;
   githubUrl?: string;
   liveUrl?: string;
-  imageUrl?: string;
+  imageUrls?: string[];
   startDate: string;
   endDate?: string;
   highlights: string[];
@@ -18,14 +18,14 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: '1',
-    title: 'E-Commerce API',
-    description: 'RESTful API untuk platform e-commerce dengan microservices architecture',
-    longDescription: 'Sistem backend lengkap untuk e-commerce dengan fitur user management, product catalog, order processing, payment integration, dan real-time notifications.',
-    technologies: ['Node.js', 'Express', 'MongoDB', 'Redis', 'Docker', 'JWT'],
-    category: 'api',
+    title: 'Forum Community',
+    description: 'anonimous forum community real time end-to-end encrypted',
+    longDescription: ' - ',
+    technologies: ['Node.js', 'Express', 'Socket', 'Mongodb', 'JWT'],
+    categories: ['api'],
     status: 'in-progress',
     featured: true,
-    githubUrl: 'https://github.com/MiyakoAi/ecommerce-api',
+    // githubUrl: 'https://github.com/MiyakoAi/ecommerce-api',
     startDate: '2024-01',
     endDate: '2024-06',
     highlights: [
@@ -39,11 +39,11 @@ export const projects: Project[] = [
   {
     id: '2',
     title: 'Library App',
-    imageUrl: '/src/assets/projects/library-app.png',
+    imageUrls: ['/images/projects/library-app-1.png', '/images/projects/library-app-2.png'],
     description: 'Lecture assignment for the Software Engineering Component course',
     longDescription: 'Building Backend from app library.',
     technologies: ['Node.js', 'MySQL', 'Express'],
-    category: 'web',
+    categories: ['api', 'web'],
     status: 'completed',
     featured: false,
     githubUrl: 'https://github.com/MiyakoAi/backend-library_app',
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     description: 'Mental Health App',
     longDescription: 'Bangkit Academy 2024 is a digital talent development program led by Google, GoTo, Tokopedia, and Traveloka, with a focus on the Cloud Computing learning path. The program includes more than 900 hours of intensive training, covering technical skills such as Google Cloud Platform, DevOps, and cloud infrastructure management, as well as soft skills development such as critical thinking, time management, and personal branding, designed to prepare superior technology talents in Indonesia.',
     technologies: ['Express', 'MySQL', 'Docker', 'GCP', 'Git'],
-    category: 'web',
+    categories: ['api'],
     status: 'completed',
     featured: false,
     githubUrl: 'https://github.com/C242-PS230-Mently/Cloud-Computing',

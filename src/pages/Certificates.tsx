@@ -1,14 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ExternalLink, Calendar, Award, ShieldCheck, Clock, Copy, Check, X, Eye } from 'lucide-react';
-import { certificates, certificateCategories, Certificate, getCertificateStats } from '../constants/certificates';
+import { Search, Calendar, Award, ShieldCheck, Copy, Check, X, Eye } from 'lucide-react';
+import { certificates, certificateCategories, type Certificate, getCertificateStats } from '../constants/Certificates';
 import CodeBlock from '../components/ui/CodeBlock';
+import TechIcon from '../components/ui/TechIcon';
 
 const Certificates: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const stats = getCertificateStats();
 
@@ -50,15 +53,32 @@ const certificationPortfolio = {
 // Professional growth through continuous learning
 console.log("Certifications showcase ready!");`;
 
-  const filteredCertificates = useMemo(() => {
-    return certificates.filter(cert => {
+  const sortedAndFilteredCertificates = useMemo(() => {
+    const filtered = certificates.filter(cert => {
       const matchesCategory = selectedCategory === 'all' || cert.category === selectedCategory;
       const matchesSearch = cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            cert.issuer.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            cert.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchTerm]);
+
+    return filtered.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'date':
+          const dateA = new Date(a.issueDate).getTime();
+          const dateB = new Date(b.issueDate).getTime();
+          comparison = dateA - dateB;
+          break;
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  }, [selectedCategory, searchTerm, sortBy, sortOrder]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,7 +159,7 @@ console.log("Certifications showcase ready!");`;
           { label: 'Featured', value: stats.featured, icon: '⭐', color: 'text-terminal-yellow' },
           { label: 'Active', value: stats.active, icon: '✅', color: 'text-terminal-green' },
           { label: 'Lifetime', value: stats.lifetime, icon: '♾️', color: 'text-terminal-purple' }
-        ].map((stat, index) => (
+        ].map((stat) => (
           <div key={stat.label} className="bg-gray-900 border border-terminal-border rounded-lg p-4 text-center">
             <div className="text-2xl mb-1">{stat.icon}</div>
             <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
@@ -163,30 +183,53 @@ console.log("Certifications showcase ready!");`;
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-2">
-          {certificateCategories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-lg font-mono text-sm transition-colors flex items-center gap-2 ${
-                selectedCategory === category.id
-                  ? 'bg-terminal-green text-black'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
+        <div className="flex flex-wrap gap-2 justify-between items-center">
+          <div className="flex flex-wrap gap-2">
+            {certificateCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 rounded-lg font-mono text-sm transition-colors flex items-center gap-2 ${
+                  selectedCategory === category.id
+                    ? 'bg-terminal-green text-black'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {category.icon} {category.name}
+                <span className="bg-gray-700 text-xs px-2 py-1 rounded">
+                  {category.count}
+                </span>
+              </button>
+            ))}
+          </div>
+          
+          {/* Sort Controls */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-400">Sort by:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-gray-800 border border-terminal-border rounded px-3 py-1 text-sm text-gray-300 focus:border-terminal-green focus:outline-none"
             >
-              {category.icon} {category.name}
-              <span className="bg-gray-700 text-xs px-2 py-1 rounded">
-                {category.count}
-              </span>
+              <option value="date">Date</option>
+              <option value="name">Name</option>
+            </select>
+            
+            <button
+              onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+              className="px-3 py-1 bg-gray-800 border border-terminal-border rounded text-sm hover:bg-gray-700 transition-colors flex items-center gap-1"
+              title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
             </button>
-          ))}
+          </div>
         </div>
       </div>
 
       {/* Certificates Grid */}
       <AnimatePresence>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredCertificates.map((cert, index) => (
+          {sortedAndFilteredCertificates.map((cert, index) => (
             <motion.div
               key={cert.id}
               layout
@@ -237,8 +280,12 @@ console.log("Certifications showcase ready!");`;
                   {cert.skills.slice(0, 3).map((skill) => (
                     <span
                       key={skill}
-                      className="px-2 py-1 bg-terminal-border text-xs rounded font-mono text-terminal-blue"
+                      className="px-2 py-1 bg-terminal-border text-xs rounded font-mono text-terminal-blue flex items-center gap-1"
                     >
+                      <TechIcon 
+                        technology={skill} 
+                        size="sm"
+                      />
                       {skill}
                     </span>
                   ))}
@@ -281,7 +328,7 @@ console.log("Certifications showcase ready!");`;
       </AnimatePresence>
 
       {/* No Results */}
-      {filteredCertificates.length === 0 && (
+      {sortedAndFilteredCertificates.length === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -327,13 +374,38 @@ console.log("Certifications showcase ready!");`;
 
               {/* Modal Content */}
               <div className="p-6 space-y-6">
-                {/* Certificate Image Placeholder */}
-                <div className="bg-gray-800 border border-terminal-border rounded-lg p-8 text-center">
-                  <div className="text-6xl mb-4">🎓</div>
-                  <p className="text-gray-400">Certificate Image</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {selectedCertificate.imageUrl || 'Image placeholder - add your certificate image here'}
-                  </p>
+                {/* Certificate Image */}
+                <div className="bg-gray-800 border border-terminal-border rounded-lg overflow-hidden">
+                  {selectedCertificate.imageUrl ? (
+                    <div className="relative">
+                      <img
+                        src={selectedCertificate.imageUrl}
+                        alt={selectedCertificate.name}
+                        className="w-full h-64 object-contain bg-gray-900"
+                        onError={(e) => {
+                          // Fallback jika gambar gagal dimuat
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="h-64 flex flex-col items-center justify-center bg-gray-900">
+                                <div class="text-6xl mb-4">🎓</div>
+                                <p class="text-gray-400">Certificate Image</p>
+                                <p class="text-sm text-gray-500 mt-1">${selectedCertificate.imageUrl}</p>
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-64 flex flex-col items-center justify-center bg-gray-900">
+                      <div className="text-6xl mb-4">🎓</div>
+                      <p className="text-gray-400">Certificate Image</p>
+                      <p className="text-sm text-gray-500 mt-1">No image available</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Certificate Info Grid */}

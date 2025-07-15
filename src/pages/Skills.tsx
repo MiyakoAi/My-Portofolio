@@ -23,35 +23,35 @@ const developer = {
   getSkillMatrix() {
     return {
       backend: {
-        nodejs: { level: 90, experience: "3 years", projects: 15 },
-        express: { level: 85, experience: "3 years", projects: 12 },
-        python: { level: 75, experience: "2 years", projects: 8 },
+        nodejs: { level: 80, experience: "1 years", projects: 3 },
+        express: { level: 70, experience: "1 years", projects: 3 },
+        python: { level: 40, experience: "1 years", projects: 0 },
         databases: {
-          mongodb: { level: 85, experience: "2 years" },
-          mysql: { level: 80, experience: "2 years" }
+          mongodb: { level: 50, experience: "1 years" },
+          mysql: { level: 70, experience: "1 years" }
         }
       },
       
       frontend: {
-        javascript: { level: 95, experience: "3 years" },
-        typescript: { level: 5, experience: "2 years" },
-        react: { level: 5, experience: "2 years" },
-        tailwindcss: { level: 5, experience: "1 year" }
+        javascript: { level: 80, experience: "1 years" },
+        typescript: { level: 5, experience: "1 years" },
+        react: { level: 5, experience: "1 years" },
+        tailwindcss: { level: 10, experience: "1 year" }
       },
       
       devops: {
-        docker: { level: 50, experience: "2 years" },
-        gcp: { level: 40, experience: "1 year" },
-        linux: { level: 60, experience: "3 years" },
-        git: { level: 90, experience: "3 years" }
+        docker: { level: 50, experience: "1 years" },
+        gcp: { level: 50, experience: "1 year" },
+        linux: { level: 40, experience: "1 years" },
+        git: { level: 85, experience: "1 years" }
       }
     };
   },
   
   getCurrentLearning() {
     return [
-      "GraphQL API design",
-      "Rust programming language",
+      "Web3 Fundamentals",
+      "Golang programming language",
       "Machine Learning fundamentals"
     ];
   }
@@ -224,7 +224,7 @@ console.log("Skills last updated:", new Date().toISOString());`;
         className="bg-gray-900 border border-terminal-border rounded-lg p-6"
       >
         <h3 className="text-xl font-semibold text-terminal-yellow mb-4">
-          🎯 Current Learning Focus
+          Current Learning Focus
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -239,7 +239,7 @@ console.log("Skills last updated:", new Date().toISOString());`;
           <div>
             <h4 className="text-terminal-green font-semibold mb-2">Next on Roadmap</h4>
             <ul className="space-y-1 text-gray-300">
-              <li>• Rust Programming Language</li>
+              <li>• Golang Programming Language</li>
               <li>• Machine Learning Fundamentals</li>
               <li>• Serverless Architecture</li>
               <li>• Web3 & Blockchain Development</li>
@@ -255,7 +255,7 @@ console.log("Skills last updated:", new Date().toISOString());`;
         transition={{ delay: 1 }}
         className="text-center text-sm text-gray-400 mt-6"
       >
-        💡 Click on each category to expand and see detailed skill breakdowns
+        Click on each category to expand and see detailed skill breakdowns
       </motion.div>
     </motion.div>
   );

@@ -1,0 +1,72 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <rect x="40" y="40" width="720" height="520" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  
+  <!-- Header -->
+  <rect x="60" y="60" width="680" height="60" fill="#334155"/>
+  <text x="400" y="95" font-family="monospace" font-size="20" fill="#e2e8f0" text-anchor="middle">Library API Documentation</text>
+  
+  <!-- Left Panel - Endpoints -->
+  <rect x="60" y="140" width="300" height="400" fill="#1e293b"/>
+  <text x="210" y="170" font-family="monospace" font-size="16" fill="#4ade80" text-anchor="middle">API Endpoints</text>
+  
+  <!-- GET endpoint -->
+  <rect x="80" y="190" width="60" height="25" fill="#10b981" rx="4"/>
+  <text x="110" y="207" font-family="monospace" font-size="10" fill="#fff" text-anchor="middle">GET</text>
+  <text x="160" y="207" font-family="monospace" font-size="12" fill="#e2e8f0">/api/books</text>
+  
+  <!-- POST endpoint -->
+  <rect x="80" y="220" width="60" height="25" fill="#3b82f6" rx="4"/>
+  <text x="110" y="237" font-family="monospace" font-size="10" fill="#fff" text-anchor="middle">POST</text>
+  <text x="160" y="237" font-family="monospace" font-size="12" fill="#e2e8f0">/api/books</text>
+  
+  <!-- PUT endpoint -->
+  <rect x="80" y="250" width="60" height="25" fill="#f59e0b" rx="4"/>
+  <text x="110" y="267" font-family="monospace" font-size="10" fill="#fff" text-anchor="middle">PUT</text>
+  <text x="160" y="267" font-family="monospace" font-size="12" fill="#e2e8f0">/api/books/:id</text>
+  
+  <!-- DELETE endpoint -->
+  <rect x="80" y="280" width="60" height="25" fill="#ef4444" rx="4"/>
+  <text x="110" y="297" font-family="monospace" font-size="10" fill="#fff" text-anchor="middle">DEL</text>
+  <text x="160" y="297" font-family="monospace" font-size="12" fill="#e2e8f0">/api/books/:id</text>
+  
+  <!-- Members endpoints -->
+  <text x="210" y="340" font-family="monospace" font-size="14" fill="#64748b" text-anchor="middle">Members</text>
+  
+  <rect x="80" y="350" width="60" height="25" fill="#10b981" rx="4"/>
+  <text x="110" y="367" font-family="monospace" font-size="10" fill="#fff" text-anchor="middle">GET</text>
+  <text x="160" y="367" font-family="monospace" font-size="12" fill="#e2e8f0">/api/members</text>
+  
+  <rect x="80" y="380" width="60" height="25" fill="#3b82f6" rx="4"/>
+  <text x="110" y="397" font-family="monospace" font-size="10" fill="#fff" text-anchor="middle">POST</text>
+  <text x="160" y="397" font-family="monospace" font-size="12" fill="#e2e8f0">/api/members</text>
+  
+  <!-- Right Panel - Response -->
+  <rect x="380" y="140" width="360" height="400" fill="#0f172a"/>
+  <text x="560" y="170" font-family="monospace" font-size="16" fill="#4ade80" text-anchor="middle">Response Example</text>
+  
+  <!-- JSON Response -->
+  <rect x="400" y="190" width="320" height="320" fill="#1e1e1e" stroke="#333" rx="4"/>
+  <text x="410" y="210" font-family="monospace" font-size="10" fill="#9ca3af">{</text>
+  <text x="420" y="230" font-family="monospace" font-size="10" fill="#60a5fa">"success":</text>
+  <text x="490" y="230" font-family="monospace" font-size="10" fill="#34d399">true,</text>
+  <text x="420" y="250" font-family="monospace" font-size="10" fill="#60a5fa">"data":</text>
+  <text x="460" y="250" font-family="monospace" font-size="10" fill="#9ca3af">[</text>
+  <text x="430" y="270" font-family="monospace" font-size="10" fill="#9ca3af">{</text>
+  <text x="440" y="290" font-family="monospace" font-size="10" fill="#60a5fa">"id":</text>
+  <text x="470" y="290" font-family="monospace" font-size="10" fill="#fbbf24">1,</text>
+  <text x="440" y="310" font-family="monospace" font-size="10" fill="#60a5fa">"title":</text>
+  <text x="480" y="310" font-family="monospace" font-size="10" fill="#34d399">"JavaScript Guide",</text>
+  <text x="440" y="330" font-family="monospace" font-size="10" fill="#60a5fa">"author":</text>
+  <text x="485" y="330" font-family="monospace" font-size="10" fill="#34d399">"John Doe",</text>
+  <text x="440" y="350" font-family="monospace" font-size="10" fill="#60a5fa">"available":</text>
+  <text x="510" y="350" font-family="monospace" font-size="10" fill="#34d399">true</text>
+  <text x="430" y="370" font-family="monospace" font-size="10" fill="#9ca3af">},</text>
+  <text x="430" y="390" font-family="monospace" font-size="10" fill="#64748b">...</text>
+  <text x="460" y="410" font-family="monospace" font-size="10" fill="#9ca3af">]</text>
+  <text x="410" y="430" font-family="monospace" font-size="10" fill="#9ca3af">}</text>
+  
+  <!-- Status indicator -->
+  <circle cx="560" cy="480" r="8" fill="#10b981"/>
+  <text x="580" y="485" font-family="monospace" font-size="12" fill="#10b981">API Online</text>
+</svg>

@@ -42,7 +42,7 @@ const TechIcon: React.FC<TechIconProps> = ({ technology, size = 'md', className 
       'HTML/CSS': '/src/assets/icons/html/w3_html5-icon.svg',
       'CSS': '/src/assets/icons/CSS/css-icon.svg',
       'Redis': '/src/assets/icons/Redis/redis-icon.svg',
-      'Rest API': '/src/assets/icons/restAPI/rest-api-icon.svg',
+      'REST API': '/src/assets/icons/restAPI/rest-api-icon.svg',
       'TypeScript': '/src/assets/icons/TypeScript/typescriptlang-icon.svg',
       'TS': '/src/assets/icons/TypeScript/typescriptlang-icon.svg',
       'JWT': '/src/assets/icons/jwt/jwt-icon.svg',
@@ -58,8 +58,25 @@ const TechIcon: React.FC<TechIconProps> = ({ technology, size = 'md', className 
   if (!iconPath) {
     // Fallback: show emoji or first letter if no icon found
     const fallbackEmoji: { [key: string]: string } = {
-      // 'Socket.io': '⚡',
-      // contoh seperti di atas
+      'Cloud Architecture': '☁️',
+      'System Design': '🏗️',
+      'Security': '🔒',
+      'DevOps': '⚙️',
+      'Database': '💾',
+      'API': '🔌',
+      'Microservices': '🔗',
+      'Monitoring': '📊',
+      'Testing': '🧪',
+      'Performance': '⚡',
+      'Scalability': '📈',
+      'Automation': '🤖',
+      'CI/CD': '🔄',
+      'Machine Learning': '🤖',
+      'Data Science': '📊',
+      'Analytics': '📈',
+      'Backend Development': '⚙️',
+      'Frontend Development': '🎨',
+      'Full Stack': '⚡',
     };
 
     return (
