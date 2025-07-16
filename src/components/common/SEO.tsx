@@ -22,7 +22,7 @@ const SEO: React.FC<SEOProps> = ({
   
   const pageTitle = title 
     ? `${title} | ${personalInfo.name}` 
-    : `${personalInfo.name} - ${personalInfo.title}`;
+    : `${personalInfo.name}`;
 
   return (
     <Helmet>

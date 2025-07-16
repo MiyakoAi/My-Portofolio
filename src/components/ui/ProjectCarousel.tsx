@@ -6,13 +6,15 @@ interface ProjectCarouselProps {
   autoSlide?: boolean;
   interval?: number;
   className?: string;
+  onImageClick?: (imageUrl: string, index: number) => void;
 }
 
 const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ 
   images, 
   autoSlide = true, 
   interval = 3000,
-  className = ''
+  className = '',
+  onImageClick
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -47,13 +49,21 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
       <img
         src={images[currentIndex]}
         alt={`Project image ${currentIndex + 1}`}
-        className="w-full h-full object-cover transition-opacity duration-300"
+        className={`w-full h-full object-cover transition-opacity duration-300 ${onImageClick ? 'cursor-pointer hover:opacity-80' : ''}`}
+        onClick={() => onImageClick?.(images[currentIndex], currentIndex)}
         onError={(e) => {
           // Fallback untuk gambar yang error
           const target = e.target as HTMLImageElement;
           target.src = '/images/placeholder-project.jpg';
         }}
       />
+
+      {/* Click to enlarge indicator */}
+      {onImageClick && (
+        <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          🔍 Click to enlarge
+        </div>
+      )}
 
       {/* Navigation Arrows (hanya muncul jika lebih dari 1 gambar) */}
       {images.length > 1 && (

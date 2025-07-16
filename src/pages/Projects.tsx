@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ExternalLink, Github, Calendar } from 'lucide-react';
+import { Search, ExternalLink, Github, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { projects, projectCategories } from '../constants/projects';
 import type { Project } from '../constants/projects';
 import TechIcon from '../components/ui/TechIcon';
@@ -12,6 +12,94 @@ const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [sortBy, setSortBy] = useState<'date' | 'status' | 'name'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [imageZoom, setImageZoom] = useState<number>(1);
+  const [imagePan, setImagePan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // Handle ESC key for closing modals
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (enlargedImage) {
+          setEnlargedImage(null);
+          resetImageControls();
+        } else if (selectedProject) {
+          setSelectedProject(null);
+        }
+      } else if (enlargedImage && selectedProject?.imageUrls && selectedProject.imageUrls.length > 1) {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          navigateImage('prev');
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          navigateImage('next');
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [enlargedImage, selectedProject, currentImageIndex]);
+
+  const resetImageControls = () => {
+    setImageZoom(1);
+    setImagePan({ x: 0, y: 0 });
+    setIsDragging(false);
+  };
+
+  const handleImageZoom = (delta: number) => {
+    setImageZoom(prev => {
+      const newZoom = prev + delta;
+      return Math.max(0.5, Math.min(3, newZoom)); 
+    });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (imageZoom > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - imagePan.x, y: e.clientY - imagePan.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && imageZoom > 1) {
+      setImagePan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    handleImageZoom(delta);
+  };
+
+  const handleImageClick = (imageUrl: string, index: number = 0) => {
+    setEnlargedImage(imageUrl);
+    setCurrentImageIndex(index);
+    resetImageControls();
+  };
+
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (!selectedProject?.imageUrls) return;
+    
+    const newIndex = direction === 'prev' 
+      ? (currentImageIndex - 1 + selectedProject.imageUrls.length) % selectedProject.imageUrls.length
+      : (currentImageIndex + 1) % selectedProject.imageUrls.length;
+    
+    setCurrentImageIndex(newIndex);
+    setEnlargedImage(selectedProject.imageUrls[newIndex]);
+    resetImageControls();
+  };
 
   const sortedAndFilteredProjects = useMemo(() => {
     const filtered = projects.filter(project => {
@@ -274,7 +362,7 @@ const Projects: React.FC = () => {
                   onClick={() => setSelectedProject(null)}
                   className="text-gray-400 hover:text-white text-2xl"
                 >
-                  ×
+                  <X className="w-6 h-6" />
                 </button>
               </div>
 
@@ -287,6 +375,7 @@ const Projects: React.FC = () => {
                       images={selectedProject.imageUrls} 
                       className="h-64"
                       autoSlide={false}
+                      onImageClick={(imageUrl, index) => handleImageClick(imageUrl, index)}
                     />
                   </div>
                 )}
@@ -380,6 +469,171 @@ const Projects: React.FC = () => {
                       View Live Demo
                     </a>
                   )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox */}
+      <AnimatePresence>
+        {enlargedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-[60]"
+            onClick={() => {
+              setEnlargedImage(null);
+              resetImageControls();
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="relative w-full h-full flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Lightbox Header */}
+              <div className="flex items-center justify-between mb-4 px-2 z-10">
+                <div className="text-white">
+                  <h3 className="text-lg font-semibold">{selectedProject?.title}</h3>
+                  <p className="text-gray-300 text-sm">
+                    Image {currentImageIndex + 1} of {selectedProject?.imageUrls?.length || 1}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Image Navigation */}
+                  {selectedProject?.imageUrls && selectedProject.imageUrls.length > 1 && (
+                    <div className="flex items-center gap-1 bg-gray-800 rounded-lg px-1 py-1 mr-2">
+                      <button
+                        onClick={() => navigateImage('prev')}
+                        className="text-white hover:text-gray-300 p-2 hover:bg-gray-700 rounded"
+                        title="Previous Image"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => navigateImage('next')}
+                        className="text-white hover:text-gray-300 p-2 hover:bg-gray-700 rounded"
+                        title="Next Image"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                  
+                  {/* Zoom Controls */}
+                  <div className="flex items-center gap-1 bg-gray-800 rounded-lg px-2 py-1">
+                    <button
+                      onClick={() => handleImageZoom(-0.25)}
+                      className="text-white hover:text-gray-300 px-2 py-1 hover:bg-gray-700 rounded text-lg"
+                      title="Zoom Out"
+                    >
+                      −
+                    </button>
+                    <span className="text-white text-sm px-2 min-w-[3rem] text-center">
+                      {Math.round(imageZoom * 100)}%
+                    </span>
+                    <button
+                      onClick={() => handleImageZoom(0.25)}
+                      className="text-white hover:text-gray-300 px-2 py-1 hover:bg-gray-700 rounded text-lg"
+                      title="Zoom In"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => {
+                        setImageZoom(1);
+                        setImagePan({ x: 0, y: 0 });
+                      }}
+                      className="text-white hover:text-gray-300 px-2 py-1 hover:bg-gray-700 rounded text-sm ml-1"
+                      title="Reset Zoom"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setEnlargedImage(null);
+                      resetImageControls();
+                    }}
+                    className="text-white hover:text-gray-300 text-2xl p-2 hover:bg-gray-800 rounded-full transition-colors"
+                    title="Close (Press Esc)"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Enlarged Image Container */}
+              <div 
+                className="flex-1 flex items-center justify-center overflow-hidden relative bg-gray-900"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onWheel={handleWheel}
+                style={{ cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+              >
+                <img
+                  src={enlargedImage}
+                  alt={selectedProject?.title || 'Project Image'}
+                  className="rounded-lg shadow-2xl select-none"
+                  style={{
+                    transform: `scale(${imageZoom}) translate(${imagePan.x / imageZoom}px, ${imagePan.y / imageZoom}px)`,
+                    maxWidth: imageZoom === 1 ? '100%' : 'none',
+                    maxHeight: imageZoom === 1 ? '100%' : 'none',
+                    objectFit: 'contain',
+                    width: imageZoom === 1 ? 'auto' : 'auto',
+                    height: imageZoom === 1 ? 'auto' : 'auto',
+                    transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                  }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTQ5NEE0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE0Ij5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjc2Nzc3IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIj7wn5OHPC90ZXh0Pgo8L3N2Zz4K';
+                  }}
+                  draggable={false}
+                />
+                
+                {/* Navigation Arrows - Only show when multiple images and not zoomed */}
+                {selectedProject?.imageUrls && selectedProject.imageUrls.length > 1 && imageZoom === 1 && (
+                  <>
+                    <button
+                      onClick={() => navigateImage('prev')}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all opacity-75 hover:opacity-100"
+                      title="Previous Image"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    
+                    <button
+                      onClick={() => navigateImage('next')}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all opacity-75 hover:opacity-100"
+                      title="Next Image"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              {/* Lightbox Footer */}
+              <div className="mt-4 text-center z-10">
+                <div className="bg-gray-800 bg-opacity-80 rounded-lg px-4 py-2 inline-block">
+                  <p className="text-gray-300 text-sm mb-1">
+                    Use mouse wheel to zoom • Click and drag to pan when zoomed
+                  </p>
+                  {selectedProject?.imageUrls && selectedProject.imageUrls.length > 1 && (
+                    <p className="text-gray-300 text-xs mb-1">
+                      Use ← → arrow keys or buttons to navigate images
+                    </p>
+                  )}
+                  <p className="text-gray-400 text-xs">
+                    Click outside or press ESC to close
+                  </p>
                 </div>
               </div>
             </motion.div>

@@ -39,7 +39,7 @@ export const projects: Project[] = [
   {
     id: '2',
     title: 'Library App',
-    imageUrls: ['/images/projects/library-app-1.png', '/images/projects/library-app-2.png'],
+
     description: 'Lecture assignment for the Software Engineering Component course',
     longDescription: 'Building Backend from app library.',
     technologies: ['Node.js', 'MySQL', 'Express'],
@@ -61,6 +61,17 @@ export const projects: Project[] = [
   {
     id: '3',
     title: 'Mently',
+    imageUrls: ['/assets/projects/1737340417551_Page_01.png',
+            '/assets/projects/1737340417551_Page_02.png', 
+            '/assets/projects/1737340417551_Page_03.png', 
+            '/assets/projects/1737340417551_Page_04.png', 
+            '/assets/projects/1737340417551_Page_05.png', 
+            '/assets/projects/1737340417551_Page_06.png', 
+            '/assets/projects/1737340417551_Page_07.png', 
+            '/assets/projects/1737340417551_Page_08.png', 
+            '/assets/projects/1737340417551_Page_09.png', 
+            '/assets/projects/1737340417551_Page_10.png'
+          ],
     description: 'Mental Health App',
     longDescription: 'Bangkit Academy 2024 is a digital talent development program led by Google, GoTo, Tokopedia, and Traveloka, with a focus on the Cloud Computing learning path. The program includes more than 900 hours of intensive training, covering technical skills such as Google Cloud Platform, DevOps, and cloud infrastructure management, as well as soft skills development such as critical thinking, time management, and personal branding, designed to prepare superior technology talents in Indonesia.',
     technologies: ['Express', 'MySQL', 'Docker', 'GCP', 'Git'],
@@ -81,10 +92,10 @@ export const projects: Project[] = [
 ];
 
 export const projectCategories = [
-  { id: 'all', name: 'All Projects', icon: '📁' },
-  { id: 'web', name: 'Web Apps', icon: '🌐' },
-  { id: 'api', name: 'APIs', icon: '🔗' },
-  { id: 'mobile', name: 'Mobile', icon: '📱' },
-  { id: 'tool', name: 'Tools', icon: '🛠️' },
-  { id: 'other', name: 'Others', icon: '💼' }
+  { id: 'all', name: 'All Projects', icon: '' },
+  { id: 'web', name: 'Web Apps', icon: '' },
+  { id: 'api', name: 'APIs', icon: '' },
+  { id: 'mobile', name: 'Mobile', icon: '' },
+  { id: 'tool', name: 'Tools', icon: '' },
+  { id: 'other', name: 'Others', icon: '' }
 ];

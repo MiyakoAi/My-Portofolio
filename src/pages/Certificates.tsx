@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Calendar, Award, ShieldCheck, Copy, Check, X, Eye } from 'lucide-react';
 import { certificates, certificateCategories, type Certificate, getCertificateStats } from '../constants/Certificates';
@@ -12,8 +12,69 @@ const Certificates: React.FC = () => {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  const [imageZoom, setImageZoom] = useState<number>(1);
+  const [imagePan, setImagePan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const stats = getCertificateStats();
+
+  // Handle ESC key for closing modals
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (enlargedImage) {
+          setEnlargedImage(null);
+          resetImageControls();
+        } else if (selectedCertificate) {
+          setSelectedCertificate(null);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [enlargedImage, selectedCertificate]);
+
+  const resetImageControls = () => {
+    setImageZoom(1);
+    setImagePan({ x: 0, y: 0 });
+    setIsDragging(false);
+  };
+
+  const handleImageZoom = (delta: number) => {
+    setImageZoom(prev => {
+      const newZoom = prev + delta;
+      return Math.max(0.5, Math.min(3, newZoom)); // Limit zoom between 0.5x and 3x
+    });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (imageZoom > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - imagePan.x, y: e.clientY - imagePan.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && imageZoom > 1) {
+      setImagePan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    handleImageZoom(delta);
+  };
 
   const certificatesCode = `// Professional Certifications Portfolio
 const certificationPortfolio = {
@@ -392,7 +453,12 @@ console.log("Certifications showcase ready!");`;
                       <img
                         src={selectedCertificate.imageUrl}
                         alt={selectedCertificate.name}
-                        className="w-full h-64 object-contain bg-gray-900"
+                        className="w-full h-64 object-contain bg-gray-900 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEnlargedImage(selectedCertificate.imageUrl!);
+                          resetImageControls();
+                        }}
                         onError={(e) => {
                           // Fallback jika gambar gagal dimuat
                           const target = e.target as HTMLImageElement;
@@ -409,6 +475,10 @@ console.log("Certifications showcase ready!");`;
                           }
                         }}
                       />
+                      <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                        <Eye className="w-3 h-3" />
+                        Click to enlarge
+                      </div>
                     </div>
                   ) : (
                     <div className="h-64 flex flex-col items-center justify-center bg-gray-900">
@@ -531,22 +601,24 @@ console.log("Certifications showcase ready!");`;
                       Verify Certificate
                     </a>
                   )}
-                  <button
-                    onClick={() => copyToClipboard(selectedCertificate.verificationUrl || '', 'url')}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
-                  >
-                    {copiedField === 'url' ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy Link
-                      </>
-                    )}
-                  </button>
+                  {selectedCertificate.verificationUrl && (
+                    <button
+                      onClick={() => copyToClipboard(selectedCertificate.verificationUrl || '', 'url')}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                    >
+                      {copiedField === 'url' ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          Copy Link
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
 
                 {/* Terminal Output */}
@@ -559,6 +631,120 @@ console.log("Certifications showcase ready!");`;
                     <div className="text-terminal-green">miyakoai@portfolio:~$ </div>
                     <span className="animate-blink">█</span>
                   </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox */}
+      <AnimatePresence>
+        {enlargedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-[60]"
+            onClick={() => {
+              setEnlargedImage(null);
+              resetImageControls();
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="relative w-full h-full flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Lightbox Header */}
+              <div className="flex items-center justify-between mb-4 px-2 z-10">
+                <div className="text-white">
+                  <h3 className="text-lg font-semibold">{selectedCertificate?.name}</h3>
+                  <p className="text-gray-300 text-sm">{selectedCertificate?.issuer}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Zoom Controls */}
+                  <div className="flex items-center gap-1 bg-gray-800 rounded-lg px-2 py-1">
+                    <button
+                      onClick={() => handleImageZoom(-0.25)}
+                      className="text-white hover:text-gray-300 px-2 py-1 hover:bg-gray-700 rounded text-lg"
+                      title="Zoom Out"
+                    >
+                      −
+                    </button>
+                    <span className="text-white text-sm px-2 min-w-[3rem] text-center">
+                      {Math.round(imageZoom * 100)}%
+                    </span>
+                    <button
+                      onClick={() => handleImageZoom(0.25)}
+                      className="text-white hover:text-gray-300 px-2 py-1 hover:bg-gray-700 rounded text-lg"
+                      title="Zoom In"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => {
+                        setImageZoom(1);
+                        setImagePan({ x: 0, y: 0 });
+                      }}
+                      className="text-white hover:text-gray-300 px-2 py-1 hover:bg-gray-700 rounded text-sm ml-1"
+                      title="Reset Zoom"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setEnlargedImage(null);
+                      resetImageControls();
+                    }}
+                    className="text-white hover:text-gray-300 text-2xl p-2 hover:bg-gray-800 rounded-full transition-colors"
+                    title="Close (Press Esc)"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Enlarged Image Container */}
+              <div 
+                className="flex-1 flex items-center justify-center overflow-hidden relative"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onWheel={handleWheel}
+                style={{ cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+              >
+                <img
+                  src={enlargedImage}
+                  alt={selectedCertificate?.name || 'Certificate'}
+                  className="max-w-none rounded-lg shadow-2xl select-none"
+                  style={{
+                    transform: `scale(${imageZoom}) translate(${imagePan.x / imageZoom}px, ${imagePan.y / imageZoom}px)`,
+                    maxWidth: imageZoom === 1 ? '100%' : 'none',
+                    maxHeight: imageZoom === 1 ? '100%' : 'none',
+                    transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                  }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTQ5NEE0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE0Ij5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjc2Nzc3IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIj7wn5OHPC90ZXh0Pgo8L3N2Zz4K';
+                  }}
+                  draggable={false}
+                />
+              </div>
+              
+              {/* Lightbox Footer */}
+              <div className="mt-4 text-center z-10">
+                <div className="bg-gray-800 bg-opacity-80 rounded-lg px-4 py-2 inline-block">
+                  <p className="text-gray-300 text-sm mb-1">
+                    Use mouse wheel to zoom • Click and drag to pan when zoomed
+                  </p>
+                  <p className="text-gray-400 text-xs">
+                    Click outside or press ESC to close
+                  </p>
                 </div>
               </div>
             </motion.div>
