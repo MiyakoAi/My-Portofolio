@@ -110,6 +110,7 @@ export const certificates: Certificate[] = [
     categories: ['general', 'frontend'],
     featured: false,
     status: 'active'
+  },
   {
     id: '8',
     name: '',

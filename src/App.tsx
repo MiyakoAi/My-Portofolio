@@ -4,7 +4,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from './context/ThemeContext';
 import { TerminalProvider } from './context/TerminalContext';
 import Layout from './components/layout/Layout';
-import { Home, About, Projects, Skills, Certificates, Contact, NotFound } from './pages';
+import Home from './pages/Home';
+import About from './pages/About';
+import Projects from './pages/Projects';
+import Skills from './pages/Skills';
+import Certificates from './pages/Certificates';
+import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 import './styles/globals.css';
 
 function App() {
