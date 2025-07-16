@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useTypewriter } from '../hooks/useTypewriter';
 import Terminal from '../components/ui/Terminal';
 import CodeBlock from '../components/ui/CodeBlock';
@@ -115,15 +116,18 @@ console.log(developer.getIntroduction());`;
           className="flex flex-wrap justify-center gap-4 pt-8"
         >
           {['about', 'projects', 'skills', 'certificates', 'contact'].map((item) => (
-            <motion.a
+            <motion.div
               key={item}
-              href={`/${item}`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 bg-terminal-border hover:bg-terminal-blue hover:text-black rounded-md transition-colors duration-200 font-mono text-sm"
             >
-              ./{item}
-            </motion.a>
+              <Link
+                to={`/${item}`}
+                className="block px-4 py-2 bg-terminal-border hover:bg-terminal-blue hover:text-black rounded-md transition-colors duration-200 font-mono text-sm"
+              >
+                ./{item}
+              </Link>
+            </motion.div>
           ))}
         </motion.div>
       </motion.div>

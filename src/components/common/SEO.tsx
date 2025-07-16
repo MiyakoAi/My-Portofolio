@@ -14,7 +14,7 @@ const SEO: React.FC<SEOProps> = ({
   title,
   description = personalInfo.bio,
   keywords = 'backend developer, full stack, react, node.js, portfolio',
-  image = '/og-image.png'
+  image = '/Tumbnail.png'
 }) => {
   const location = useLocation();
   const baseUrl = 'https://my-portofolio-da5i.vercel.app'; // Updated with your Vercel domain
