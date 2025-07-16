@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ExternalLink, Github, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { projects, projectCategories } from '../constants/projects';
 import type { Project } from '../constants/projects';
+import SEO from '../components/common/SEO';
 import TechIcon from '../components/ui/TechIcon';
 import ProjectCarousel from '../components/ui/ProjectCarousel';
 
@@ -152,12 +153,19 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="container mx-auto px-4 py-8 max-w-7xl"
-    >
+    <>
+      <SEO 
+        title="Projects"
+        description="Portofolio project - Kumpulan project backend development, API development, dan full stack applications"
+        keywords="projects, backend projects, api development, full stack projects, node.js projects"
+        image="https://my-portofolio-da5i.vercel.app/assets/projects/1737340417551_Page_01.png"
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-8 max-w-7xl"
+      >
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-terminal-green mb-2">
@@ -640,7 +648,8 @@ const Projects: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

@@ -14,11 +14,12 @@ const SEO: React.FC<SEOProps> = ({
   title,
   description = personalInfo.bio,
   keywords = 'backend developer, full stack, react, node.js, portfolio',
-  image = '/og-image.jpg'
+  image = '/og-image.png'
 }) => {
   const location = useLocation();
-  const baseUrl = 'https://miyakoai.dev'; // Replace with your domain
+  const baseUrl = 'https://my-portofolio-da5i.vercel.app'; // Updated with your Vercel domain
   const currentUrl = `${baseUrl}${location.pathname}`;
+  const fullImageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
   
   const pageTitle = title 
     ? `${title} | ${personalInfo.name}` 
@@ -36,7 +37,7 @@ const SEO: React.FC<SEOProps> = ({
       {/* Open Graph Meta Tags */}
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
+      <meta property="og:image" content={fullImageUrl} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content={`${personalInfo.name} Portfolio`} />
@@ -45,7 +46,7 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image" content={fullImageUrl} />
       
       {/* Canonical URL */}
       <link rel="canonical" href={currentUrl} />

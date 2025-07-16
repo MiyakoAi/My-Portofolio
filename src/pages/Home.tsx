@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTypewriter } from '../hooks/useTypewriter';
 import Terminal from '../components/ui/Terminal';
 import CodeBlock from '../components/ui/CodeBlock';
+import SEO from '../components/common/SEO';
 import { personalInfo } from '../constants/personalInfo';
 
 const Home: React.FC = () => {
@@ -43,7 +44,14 @@ const developer = {
 console.log(developer.getIntroduction());`;
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4">
+    <>
+      <SEO 
+        title="Home"
+        description="Portfolio Backend Developer - Full Stack Web Developer dengan keahlian dalam Node.js, React, dan teknologi modern lainnya"
+        keywords="backend developer, full stack developer, portfolio, web developer, node.js, react, javascript"
+        image="https://my-portofolio-da5i.vercel.app/og-image.png"
+      />
+      <div className="min-h-screen flex flex-col justify-center items-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -119,7 +127,8 @@ console.log(developer.getIntroduction());`;
           ))}
         </motion.div>
       </motion.div>
-    </div>
+      </div>
+    </>
   );
 };
 
