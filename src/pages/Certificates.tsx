@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Calendar, Award, ShieldCheck, Copy, Check, X, Eye } from 'lucide-react';
 import { usePageVisit } from '../context/PageVisitContext';
@@ -18,6 +18,7 @@ const Certificates: React.FC = () => {
   const [imagePan, setImagePan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   const { isPageVisited, markPageAsVisited } = usePageVisit();
   
   const isCertificatesVisited = isPageVisited('certificates');
@@ -51,6 +52,17 @@ const Certificates: React.FC = () => {
     document.addEventListener('keydown', handleEscKey);
     return () => document.removeEventListener('keydown', handleEscKey);
   }, [enlargedImage, selectedCertificate]);
+
+  // Handle wheel event for image zoom with non-passive listener
+  useEffect(() => {
+    const container = imageContainerRef.current;
+    if (container && enlargedImage) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [enlargedImage]);
 
   const resetImageControls = () => {
     setImageZoom(1);
@@ -100,7 +112,7 @@ const Certificates: React.FC = () => {
     setIsDragging(false);
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
+  const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? -0.1 : 0.1;
     handleImageZoom(delta);
@@ -665,7 +677,7 @@ console.log("Certifications showcase ready!");`;
                     <div className="text-gray-300">Credential verified ✅</div>
                     <div className="text-gray-300">Issuer: {selectedCertificate.issuer}</div>
                     <div className="text-gray-300">Status: {selectedCertificate.status}</div>
-                    <div className="text-terminal-green">miyakoai@portfolio:~$ </div>
+                    <div className="text-terminal-green">mugniadji@portfolio:~$ </div>
                     <span className="animate-blink">█</span>
                   </div>
                 </div>
@@ -771,12 +783,12 @@ console.log("Certifications showcase ready!");`;
                   }}
                 >
                   <div 
+                    ref={imageContainerRef}
                     className="w-full h-full relative"
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
-                    onWheel={handleWheel}
                     style={{ 
                       cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
                       overflow: 'hidden'

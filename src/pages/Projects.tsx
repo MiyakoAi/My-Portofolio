@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ExternalLink, Github, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { projects, projectCategories } from '../constants/projects';
@@ -19,6 +19,7 @@ const Projects: React.FC = () => {
   const [imagePan, setImagePan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
   // Handle ESC key for closing modals
   useEffect(() => {
@@ -44,6 +45,17 @@ const Projects: React.FC = () => {
     document.addEventListener('keydown', handleEscKey);
     return () => document.removeEventListener('keydown', handleEscKey);
   }, [enlargedImage, selectedProject, currentImageIndex]);
+
+  // Handle wheel event for image zoom with non-passive listener
+  useEffect(() => {
+    const container = imageContainerRef.current;
+    if (container && enlargedImage) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [enlargedImage]);
 
   const resetImageControls = () => {
     setImageZoom(1);
@@ -93,7 +105,7 @@ const Projects: React.FC = () => {
     setIsDragging(false);
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
+  const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? -0.1 : 0.1;
     handleImageZoom(delta);
@@ -624,12 +636,12 @@ const Projects: React.FC = () => {
                   }}
                 >
                   <div 
+                    ref={imageContainerRef}
                     className="w-full h-full relative"
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
-                    onWheel={handleWheel}
                     style={{ 
                       cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
                       overflow: 'hidden'

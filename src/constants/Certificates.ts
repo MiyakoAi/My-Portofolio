@@ -262,7 +262,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '17',
+    id: '18',
     name: 'Introduction to Dark Web, Anonymity, and Cryptocurrency',
     issuer: 'EC-Council',
     issueDate: 'June 2024',
@@ -277,7 +277,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '18',
+    id: '19',
     name: 'Network Defense Essentials (NDE)',
     issuer: 'EC-Council',
     issueDate: 'June 2024',
@@ -292,7 +292,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '19',
+    id: '20',
     name: 'Certification of Completeion English Course',
     issuer: 'Master of English Course',
     issueDate: 'December 2021',
