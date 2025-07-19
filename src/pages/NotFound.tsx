@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Home, ArrowLeft, Terminal } from 'lucide-react';
 import { useTypewriter } from '../hooks/useTypewriter';
 import CodeBlock from '../components/ui/CodeBlock';
+import path from 'path';
 
 const NotFound: React.FC = () => {
   const errorCode = `// Error 404: Page Not Found
@@ -30,6 +31,7 @@ class PageNotFoundError extends Error {
       '/about',
       '/projects', 
       '/skills',
+      '/certificates',
       '/contact'
     ];
   }
@@ -41,7 +43,7 @@ console.error(error.message);
 
 // Available solutions:
 error.getSuggestions().forEach(suggestion => {
-  console.log('💡', suggestion);
+  console.log(suggestion);
 });`;
 
   const { displayText } = useTypewriter({
@@ -116,6 +118,7 @@ error.getSuggestions().forEach(suggestion => {
               { path: '/about', label: 'About', command: 'cat about.md' },
               { path: '/projects', label: 'Projects', command: 'ls projects/' },
               { path: '/skills', label: 'Skills', command: 'which skills' },
+              { path: '/certificates', label: 'Certificates', command: 'cat certificates.txt' },
               { path: '/contact', label: 'Contact', command: 'curl contact.json' }
             ].map((item) => (
               <Link
@@ -137,7 +140,7 @@ error.getSuggestions().forEach(suggestion => {
         {/* Terminal Commands */}
         <div className="bg-gray-900 border border-terminal-border rounded-lg p-6">
           <h3 className="text-lg font-semibold text-terminal-yellow mb-4">
-            🎯 Try These Commands
+            Try These Commands
           </h3>
           <div className="space-y-3 font-mono text-sm">
             <div className="bg-gray-800 p-3 rounded">
@@ -191,9 +194,9 @@ error.getSuggestions().forEach(suggestion => {
         className="mt-8 bg-gray-900 border border-terminal-border rounded-lg p-4"
       >
         <div className="font-mono text-sm">
-          <div className="text-terminal-green">miyakoai@portfolio:~$ find . -name "*.lost" -type f</div>
+          <div className="text-terminal-green">mugniadji@portfolio:~$ find . -name "*.lost" -type f</div>
           <div className="text-gray-400">./you_are_here.lost</div>
-          <div className="text-terminal-green">miyakoai@portfolio:~$ </div>
+          <div className="text-terminal-green">mugniadji@portfolio:~$ </div>
           <span className="animate-blink">█</span>
         </div>
       </motion.div>

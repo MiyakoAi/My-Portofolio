@@ -11,7 +11,7 @@ const Projects: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [sortBy, setSortBy] = useState<'date' | 'status' | 'name'>('date');
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'name' | 'featured'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -54,7 +54,14 @@ const Projects: React.FC = () => {
   const handleImageZoom = (delta: number) => {
     setImageZoom(prev => {
       const newZoom = prev + delta;
-      return Math.max(0.5, Math.min(3, newZoom)); 
+      const clampedZoom = Math.max(0.5, Math.min(2.5, newZoom)); // Reduced max zoom
+      
+      // Reset pan when zooming to prevent overflow
+      if (clampedZoom !== prev) {
+        setImagePan({ x: 0, y: 0 });
+      }
+      
+      return clampedZoom;
     });
   };
 
@@ -67,9 +74,17 @@ const Projects: React.FC = () => {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isDragging && imageZoom > 1) {
+      const newPanX = e.clientX - dragStart.x;
+      const newPanY = e.clientY - dragStart.y;
+      
+      // Much more restrictive pan limits
+      const maxPan = 50 * Math.max(0, imageZoom - 1); // Even smaller limit
+      const clampedX = Math.max(-maxPan, Math.min(maxPan, newPanX));
+      const clampedY = Math.max(-maxPan, Math.min(maxPan, newPanY));
+      
       setImagePan({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        x: clampedX,
+        y: clampedY
       });
     }
   };
@@ -127,6 +142,12 @@ const Projects: React.FC = () => {
           break;
         case 'name':
           comparison = a.title.localeCompare(b.title);
+          break;
+        case 'featured':
+          // Featured projects first
+          const aFeatured = a.featured ? 1 : 0;
+          const bFeatured = b.featured ? 1 : 0;
+          comparison = bFeatured - aFeatured;
           break;
       }
       
@@ -219,6 +240,7 @@ const Projects: React.FC = () => {
               <option value="date">Date</option>
               <option value="status">Status</option>
               <option value="name">Name</option>
+              <option value="featured">Featured</option>
             </select>
             
             <button
@@ -501,11 +523,11 @@ const Projects: React.FC = () => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="relative w-full h-full flex flex-col"
+              className="relative w-full h-full flex flex-col max-h-screen"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Lightbox Header */}
-              <div className="flex items-center justify-between mb-4 px-2 z-10">
+              <div className="flex items-center justify-between mb-4 px-2 z-50 relative bg-black bg-opacity-20 rounded-lg backdrop-blur-sm flex-shrink-0">
                 <div className="text-white">
                   <h3 className="text-lg font-semibold">{selectedProject?.title}</h3>
                   <p className="text-gray-300 text-sm">
@@ -578,40 +600,85 @@ const Projects: React.FC = () => {
               
               {/* Enlarged Image Container */}
               <div 
-                className="flex-1 flex items-center justify-center overflow-hidden relative bg-gray-900"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onWheel={handleWheel}
-                style={{ cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+                className="flex-1 relative bg-gray-900"
+                style={{
+                  height: 'calc(100vh - 200px)',
+                  maxHeight: 'calc(100vh - 200px)',
+                  minHeight: '400px',
+                  overflow: 'hidden',
+                  contain: 'layout style paint size',
+                  isolation: 'isolate',
+                  position: 'relative',
+                  maskImage: 'linear-gradient(to bottom, transparent 0px, black 10px, black calc(100% - 10px), transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 10px, black calc(100% - 10px), transparent 100%)'
+                }}
               >
-                <img
-                  src={enlargedImage}
-                  alt={selectedProject?.title || 'Project Image'}
-                  className="rounded-lg shadow-2xl select-none"
+                {/* Absolute containment layer */}
+                <div 
+                  className="absolute inset-2"
                   style={{
-                    transform: `scale(${imageZoom}) translate(${imagePan.x / imageZoom}px, ${imagePan.y / imageZoom}px)`,
-                    maxWidth: imageZoom === 1 ? '100%' : 'none',
-                    maxHeight: imageZoom === 1 ? '100%' : 'none',
-                    objectFit: 'contain',
-                    width: imageZoom === 1 ? 'auto' : 'auto',
-                    height: imageZoom === 1 ? 'auto' : 'auto',
-                    transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                    overflow: 'hidden',
+                    clipPath: 'inset(10px)',
+                    WebkitClipPath: 'inset(10px)',
+                    borderRadius: '8px'
                   }}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTQ5NEE0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE0Ij5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjc2Nzc3IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIj7wn5OHPC90ZXh0Pgo8L3N2Zz4K';
-                  }}
-                  draggable={false}
-                />
+                >
+                  <div 
+                    className="w-full h-full relative"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onWheel={handleWheel}
+                    style={{ 
+                      cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: `translate(-50%, -50%)`,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <img
+                        src={enlargedImage}
+                        alt={selectedProject?.title || 'Project Image'}
+                        className="rounded-lg shadow-2xl select-none block"
+                        style={{
+                          transform: `scale(${Math.min(imageZoom, 2.5)}) translate(${imagePan.x * 0.5}px, ${imagePan.y * 0.5}px)`,
+                          maxWidth: imageZoom === 1 ? '85%' : '100%',
+                          maxHeight: imageZoom === 1 ? '85%' : '100%',
+                          width: 'auto',
+                          height: 'auto',
+                          objectFit: 'contain',
+                          transition: isDragging ? 'none' : 'transform 0.2s ease-out',
+                          transformOrigin: 'center center'
+                        }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTQ5NEE0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE0Ij5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjc2Nzc3IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIj7wn5OHPC90ZXh0Pgo8L3N2Zz4K';
+                        }}
+                        draggable={false}
+                      />
+                    </div>
+                  </div>
+                </div>
                 
                 {/* Navigation Arrows - Only show when multiple images and not zoomed */}
                 {selectedProject?.imageUrls && selectedProject.imageUrls.length > 1 && imageZoom === 1 && (
                   <>
                     <button
                       onClick={() => navigateImage('prev')}
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all opacity-75 hover:opacity-100"
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all opacity-75 hover:opacity-100 z-30"
                       title="Previous Image"
                     >
                       <ChevronLeft className="w-6 h-6" />
@@ -619,7 +686,7 @@ const Projects: React.FC = () => {
                     
                     <button
                       onClick={() => navigateImage('next')}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all opacity-75 hover:opacity-100"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all opacity-75 hover:opacity-100 z-30"
                       title="Next Image"
                     >
                       <ChevronRight className="w-6 h-6" />
@@ -629,8 +696,8 @@ const Projects: React.FC = () => {
               </div>
               
               {/* Lightbox Footer */}
-              <div className="mt-4 text-center z-10">
-                <div className="bg-gray-800 bg-opacity-80 rounded-lg px-4 py-2 inline-block">
+              <div className="mt-4 text-center z-50 relative flex-shrink-0">
+                <div className="bg-gray-800 bg-opacity-90 rounded-lg px-4 py-2 inline-block backdrop-blur-sm border border-gray-600">
                   <p className="text-gray-300 text-sm mb-1">
                     Use mouse wheel to zoom • Click and drag to pan when zoomed
                   </p>

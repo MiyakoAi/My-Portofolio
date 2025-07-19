@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Calendar, Award, ShieldCheck, Copy, Check, X, Eye } from 'lucide-react';
+import { usePageVisit } from '../context/PageVisitContext';
 import { certificates, certificateCategories, type Certificate, getCertificateStats } from '../constants/Certificates';
 import CodeBlock from '../components/ui/CodeBlock';
 import TechIcon from '../components/ui/TechIcon';
@@ -10,15 +11,29 @@ const Certificates: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
+  const [sortBy, setSortBy] = useState<'date' | 'name' | 'featured'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
   const [imageZoom, setImageZoom] = useState<number>(1);
   const [imagePan, setImagePan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const { isPageVisited, markPageAsVisited } = usePageVisit();
+  
+  const isCertificatesVisited = isPageVisited('certificates');
 
   const stats = getCertificateStats();
+  
+  useEffect(() => {
+    if (!isCertificatesVisited) {
+      // Give time for CodeBlock animations to start and complete
+      const timer = setTimeout(() => {
+        markPageAsVisited('certificates');
+      }, 5000); // Increased to 5 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isCertificatesVisited, markPageAsVisited]);
 
   // Handle ESC key for closing modals
   useEffect(() => {
@@ -46,7 +61,14 @@ const Certificates: React.FC = () => {
   const handleImageZoom = (delta: number) => {
     setImageZoom(prev => {
       const newZoom = prev + delta;
-      return Math.max(0.5, Math.min(3, newZoom)); // Limit zoom between 0.5x and 3x
+      const clampedZoom = Math.max(0.5, Math.min(2.5, newZoom)); // Reduced max zoom
+      
+      // Reset pan when zooming to prevent overflow
+      if (clampedZoom !== prev) {
+        setImagePan({ x: 0, y: 0 });
+      }
+      
+      return clampedZoom;
     });
   };
 
@@ -59,9 +81,17 @@ const Certificates: React.FC = () => {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isDragging && imageZoom > 1) {
+      const newPanX = e.clientX - dragStart.x;
+      const newPanY = e.clientY - dragStart.y;
+      
+      // Much more restrictive pan limits
+      const maxPan = 50 * Math.max(0, imageZoom - 1); // Even smaller limit
+      const clampedX = Math.max(-maxPan, Math.min(maxPan, newPanX));
+      const clampedY = Math.max(-maxPan, Math.min(maxPan, newPanY));
+      
       setImagePan({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        x: clampedX,
+        y: clampedY
       });
     }
   };
@@ -136,6 +166,12 @@ console.log("Certifications showcase ready!");`;
         case 'name':
           comparison = a.name.localeCompare(b.name);
           break;
+        case 'featured':
+          // Featured certificates first
+          const aFeatured = a.featured ? 1 : 0;
+          const bFeatured = b.featured ? 1 : 0;
+          comparison = bFeatured - aFeatured;
+          break;
       }
       
       return sortOrder === 'asc' ? comparison : -comparison;
@@ -204,7 +240,7 @@ console.log("Certifications showcase ready!");`;
         <CodeBlock 
           code={certificatesCode}
           language="javascript"
-          animated={true}
+          animated={!isCertificatesVisited}
           speed={20}
         />
       </motion.div>
@@ -275,6 +311,7 @@ console.log("Certifications showcase ready!");`;
             >
               <option value="date">Date</option>
               <option value="name">Name</option>
+              <option value="featured">Featured</option>
             </select>
             
             <button
@@ -655,11 +692,11 @@ console.log("Certifications showcase ready!");`;
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="relative w-full h-full flex flex-col"
+              className="relative w-full h-full flex flex-col max-h-screen"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Lightbox Header */}
-              <div className="flex items-center justify-between mb-4 px-2 z-10">
+              <div className="flex items-center justify-between mb-4 px-2 z-50 relative bg-black bg-opacity-20 rounded-lg backdrop-blur-sm flex-shrink-0">
                 <div className="text-white">
                   <h3 className="text-lg font-semibold">{selectedCertificate?.name}</h3>
                   <p className="text-gray-300 text-sm">{selectedCertificate?.issuer}</p>
@@ -710,35 +747,83 @@ console.log("Certifications showcase ready!");`;
               
               {/* Enlarged Image Container */}
               <div 
-                className="flex-1 flex items-center justify-center overflow-hidden relative"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onWheel={handleWheel}
-                style={{ cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+                className="flex-1 relative bg-gray-900"
+                style={{
+                  height: 'calc(100vh - 200px)',
+                  maxHeight: 'calc(100vh - 200px)',
+                  minHeight: '400px',
+                  overflow: 'hidden',
+                  contain: 'layout style paint size',
+                  isolation: 'isolate',
+                  position: 'relative',
+                  maskImage: 'linear-gradient(to bottom, transparent 0px, black 10px, black calc(100% - 10px), transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 10px, black calc(100% - 10px), transparent 100%)'
+                }}
               >
-                <img
-                  src={enlargedImage}
-                  alt={selectedCertificate?.name || 'Certificate'}
-                  className="max-w-none rounded-lg shadow-2xl select-none"
+                {/* Absolute containment layer */}
+                <div 
+                  className="absolute inset-2"
                   style={{
-                    transform: `scale(${imageZoom}) translate(${imagePan.x / imageZoom}px, ${imagePan.y / imageZoom}px)`,
-                    maxWidth: imageZoom === 1 ? '100%' : 'none',
-                    maxHeight: imageZoom === 1 ? '100%' : 'none',
-                    transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                    overflow: 'hidden',
+                    clipPath: 'inset(10px)',
+                    WebkitClipPath: 'inset(10px)',
+                    borderRadius: '8px'
                   }}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTQ5NEE0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE0Ij5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjc2Nzc3IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIj7wn5OHPC90ZXh0Pgo8L3N2Zz4K';
-                  }}
-                  draggable={false}
-                />
+                >
+                  <div 
+                    className="w-full h-full relative"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onWheel={handleWheel}
+                    style={{ 
+                      cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: `translate(-50%, -50%)`,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <img
+                        src={enlargedImage}
+                        alt={selectedCertificate?.name || 'Certificate'}
+                        className="rounded-lg shadow-2xl select-none block"
+                        style={{
+                          transform: `scale(${Math.min(imageZoom, 2.5)}) translate(${imagePan.x * 0.5}px, ${imagePan.y * 0.5}px)`,
+                          maxWidth: imageZoom === 1 ? '85%' : '100%',
+                          maxHeight: imageZoom === 1 ? '85%' : '100%',
+                          width: 'auto',
+                          height: 'auto',
+                          objectFit: 'contain',
+                          transition: isDragging ? 'none' : 'transform 0.2s ease-out',
+                          transformOrigin: 'center center'
+                        }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTQ5NEE0IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE0Ij5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjc2Nzc3IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIj7wn5OHPC90ZXh0Pgo8L3N2Zz4K';
+                        }}
+                        draggable={false}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               
               {/* Lightbox Footer */}
-              <div className="mt-4 text-center z-10">
-                <div className="bg-gray-800 bg-opacity-80 rounded-lg px-4 py-2 inline-block">
+              <div className="mt-4 text-center z-50 relative">
+                <div className="bg-gray-800 bg-opacity-90 rounded-lg px-4 py-2 inline-block backdrop-blur-sm border border-gray-600">
                   <p className="text-gray-300 text-sm mb-1">
                     Use mouse wheel to zoom • Click and drag to pan when zoomed
                   </p>
@@ -751,6 +836,7 @@ console.log("Certifications showcase ready!");`;
           </motion.div>
         )}
       </AnimatePresence>
+
     </motion.div>
   );
 };

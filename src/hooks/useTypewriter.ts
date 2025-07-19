@@ -18,6 +18,14 @@ export const useTypewriter = ({
   const [isComplete, setIsComplete] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
 
+  // Reset state when text changes
+  useEffect(() => {
+    setDisplayText('');
+    setIsTyping(false);
+    setIsComplete(false);
+    setHasStarted(false);
+  }, [text]);
+
   useEffect(() => {
     if (!text || hasStarted) return;
 

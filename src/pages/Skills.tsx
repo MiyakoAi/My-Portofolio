@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Code, Database, Server, Wrench } from 'lucide-react';
+import { usePageVisit } from '../context/PageVisitContext';
 import { skillCategories } from '../constants/skills';
 import type { Skill, SkillCategory } from '../constants/skills';
 import CodeBlock from '../components/ui/CodeBlock';
@@ -9,11 +10,28 @@ import TechIcon from '../components/ui/TechIcon';
 const Skills: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [animateSkills, setAnimateSkills] = useState(false);
+  const { isPageVisited, markPageAsVisited } = usePageVisit();
+  
+  const isSkillsVisited = isPageVisited('skills');
 
   useEffect(() => {
-    const timer = setTimeout(() => setAnimateSkills(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!isSkillsVisited) {
+      // Give time for CodeBlock animations to start and complete
+      const markTimer = setTimeout(() => {
+        markPageAsVisited('skills');
+      }, 5000); // Increased to 5 seconds
+      
+      const animateTimer = setTimeout(() => setAnimateSkills(true), 500);
+      
+      return () => {
+        clearTimeout(markTimer);
+        clearTimeout(animateTimer);
+      };
+    } else {
+      // If page was visited before, show skills immediately
+      setAnimateSkills(true);
+    }
+  }, [isSkillsVisited, markPageAsVisited]);
 
   const skillsOverviewCode = `// Skills Assessment - Real-time evaluation
 const developer = {
@@ -206,7 +224,7 @@ console.log("Skills last updated:", new Date().toISOString());`;
         <CodeBlock 
           code={skillsOverviewCode}
           language="javascript"
-          animated={true}
+          animated={!isSkillsVisited}
           speed={20}
         />
       </div>
@@ -257,6 +275,9 @@ console.log("Skills last updated:", new Date().toISOString());`;
       >
         Click on each category to expand and see detailed skill breakdowns
       </motion.div>
+
+      {/* Reset Button */}
+
     </motion.div>
   );
 };

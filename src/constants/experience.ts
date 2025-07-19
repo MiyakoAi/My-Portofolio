@@ -19,16 +19,16 @@ export const experiences: Experience[] = [
     title: 'Assistant IT Manager',
     company: 'Galesong.',
     location: 'On Site',
-    startDate: 'Jun 2024',
-    // endDate: 'Jul 2024',
-    current: true,
+    startDate: 'June 2024',
+    endDate: 'July 2024',
+    current: false,
     description: 'Internship Participants.',
-    logoUrl: '/company-logos/galesongLogo.png', // Company logo
+    logoUrl: '/company-logos/galesongLogo.png',
     responsibilities: [
       'develop internal systems',
       'helpig employees',
     ],
-    technologies: ['Html', 'CSS'],
+    technologies: ['HTML', 'CSS', "Team Work"],
     achievements: [
       '-',
     ]
@@ -38,8 +38,8 @@ export const experiences: Experience[] = [
     title: 'Cloud Computing Cohort',
     company: 'Bangkit Academy led by Google, Tokopedia, Gojek, & Traveloka.',
     location: 'Remote',
-    startDate: 'Sep 2024',
-    endDate: 'Jan 2025',
+    startDate: 'September 2024',
+    endDate: 'January 2025',
     current: false,
     description: 'Developed RESTful APIs and integrated to mobile.',
     logoUrl: '/company-logos/bangkitLogo.png', 

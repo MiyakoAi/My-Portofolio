@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTypewriter } from '../../hooks/useTypewriter';
 
 interface CodeBlockProps {
@@ -14,9 +14,26 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   animated = false, 
   speed = 30 
 }) => {
+  const [shouldAnimate, setShouldAnimate] = useState(animated);
+  const [hasStartedAnimation, setHasStartedAnimation] = useState(false);
+
+  // Once animation starts, let it complete regardless of animated prop changes
+  useEffect(() => {
+    if (animated && !hasStartedAnimation) {
+      setShouldAnimate(true);
+      setHasStartedAnimation(true);
+    } else if (!animated && !hasStartedAnimation) {
+      setShouldAnimate(false);
+    }
+  }, [animated, hasStartedAnimation]);
+
   const { displayText, isComplete } = useTypewriter({
-    text: animated ? code : '',
+    text: shouldAnimate ? code : '',
     speed,
+    onComplete: () => {
+      // Animation completed, we can now safely disable animation
+      setShouldAnimate(false);
+    }
   });
 
   return (
@@ -35,8 +52,8 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       
       <div className="p-4 font-mono text-sm text-terminal-text">
         <pre className="whitespace-pre-wrap">
-          {animated ? displayText : code}
-          {animated && !isComplete && (
+          {shouldAnimate ? displayText : code}
+          {shouldAnimate && !isComplete && (
             <span className="text-terminal-green animate-blink">█</span>
           )}
         </pre>

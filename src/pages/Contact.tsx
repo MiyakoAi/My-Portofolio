@@ -1,24 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, MapPin, Send, Copy, Check, Instagram } from 'lucide-react';
-import { useTypewriter } from '../hooks/useTypewriter';
+import { usePageVisit } from '../context/PageVisitContext';
 import CodeBlock from '../components/ui/CodeBlock';
 import { personalInfo } from '../constants/personalInfo';
 
 const Contact: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const { isPageVisited, markPageAsVisited } = usePageVisit();
+  
+  const isContactVisited = isPageVisited('contact');
+  
+  useEffect(() => {
+    if (!isContactVisited) {
+      // Give time for CodeBlock animations to start and complete
+      const timer = setTimeout(() => {
+        markPageAsVisited('contact');
+      }, 5000); // Increased to 5 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isContactVisited, markPageAsVisited]);
 
   const contactCode = `// Contact Information
 const contactInfo = {
-  developer: "MiyakoAi",
+  github: "MiyakoAi",
   email: "${personalInfo.email}",
   location: "${personalInfo.location}",
   timezone: "UTC+7",
@@ -55,30 +61,6 @@ function sendMessage(message) {
 
 // Let's connect!
 console.log("Ready to collaborate");`;
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-      setTimeout(() => setSubmitStatus('idle'), 5000);
-    }
-  };
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -146,16 +128,8 @@ console.log("Ready to collaborate");`;
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Contact Information */}
+        {/* Left Side: Contact Information & Availability */}
         <div className="space-y-6">
-          {/* Code Block */}
-          <CodeBlock 
-            code={contactCode}
-            language="javascript"
-            animated={true}
-            speed={25}
-          />
-
           {/* Contact Methods */}
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-terminal-yellow">
@@ -167,7 +141,7 @@ console.log("Ready to collaborate");`;
                 key={method.label}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 + 0.5 }}
+                transition={{ delay: index * 0.1 + 0.3 }}
                 className="bg-gray-900 border border-terminal-border rounded-lg p-4 hover:border-terminal-green transition-colors group"
               >
                 <div className="flex items-center justify-between">
@@ -229,14 +203,11 @@ console.log("Ready to collaborate");`;
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Freelance Projects:</span>
-                {/* <span className="text-terminal-green">Available</span> */}
                 <span className="text-terminal-red">Not Available</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Full-time Opportunities:</span>
-                {/* <span className="text-terminal-yellow">Open to Discuss</span> */}
                 <span className="text-terminal-red">Not Available</span>
-
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Response Time:</span>
@@ -244,135 +215,52 @@ console.log("Ready to collaborate");`;
               </div>
             </div>
           </motion.div>
+
+          {/* Preferred Communication */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="bg-gray-900 border border-terminal-border rounded-lg p-4"
+          >
+            <h4 className="text-terminal-yellow font-semibold mb-3">
+              Preferred Communication
+            </h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-terminal-blue" />
+                <span className="text-gray-300">Email is the best way to reach me</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Github className="w-4 h-4 text-terminal-blue" />
+                <span className="text-gray-300">Check out my latest projects on GitHub</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Linkedin className="w-4 h-4 text-terminal-blue" />
+                <span className="text-gray-300">Connect with me professionally</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Contact Form */}
+        {/* Right Side: Contact Code Block */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-gray-900 border border-terminal-border rounded-lg p-6"
+          transition={{ delay: 0.5 }}
+          className="space-y-6"
         >
-          <h3 className="text-xl font-semibold text-terminal-yellow mb-6">
-            Send a Message
-          </h3>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-terminal-text mb-2">
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 bg-gray-800 border border-terminal-border rounded font-mono text-terminal-text placeholder-gray-400 focus:border-terminal-green focus:outline-none"
-                  placeholder="Your Name"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-terminal-text mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 bg-gray-800 border border-terminal-border rounded font-mono text-terminal-text placeholder-gray-400 focus:border-terminal-green focus:outline-none"
-                  placeholder="xxxxxx@email.com"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-terminal-text mb-2">
-                Subject *
-              </label>
-              <input
-                type="text"
-                name="subject"
-                value={formData.subject}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 bg-gray-800 border border-terminal-border rounded font-mono text-terminal-text placeholder-gray-400 focus:border-terminal-green focus:outline-none"
-                placeholder="Project collaboration, job opportunity, etc."
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-terminal-text mb-2">
-                Message *
-              </label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleInputChange}
-                required
-                rows={6}
-                className="w-full px-3 py-2 bg-gray-800 border border-terminal-border rounded font-mono text-terminal-text placeholder-gray-400 focus:border-terminal-green focus:outline-none resize-none"
-                placeholder="Tell me about your project, ideas, or how we can work together..."
-              />
-            </div>
-
-            {/* Submit Button */}
-            <motion.button
-              type="submit"
-              disabled={isSubmitting}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`w-full py-3 px-4 rounded font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
-                isSubmitting
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  : submitStatus === 'success'
-                  ? 'bg-terminal-green text-black'
-                  : submitStatus === 'error'
-                  ? 'bg-terminal-red text-white'
-                  : 'bg-terminal-blue text-black hover:bg-blue-400'
-              }`}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                  Sending...
-                </>
-              ) : submitStatus === 'success' ? (
-                <>
-                  <Check className="w-4 h-4" />
-                  Message Sent!
-                </>
-              ) : submitStatus === 'error' ? (
-                'Error - Please try again'
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  Send Message
-                </>
-              )}
-            </motion.button>
-          </form>
-
-          {/* Terminal Output */}
-          {submitStatus === 'success' && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-3 bg-gray-800 border border-terminal-green rounded font-mono text-sm"
-            >
-              <div className="text-terminal-green">
-                $ message.send() <span className="animate-blink">█</span>
-              </div>
-              <div className="text-gray-300">
-                Message sent successfully! ✅<br />
-                Response expected within 24-48 hours.
-              </div>
-            </motion.div>
-          )}
+          <div>
+            <h3 className="text-xl font-semibold text-terminal-yellow mb-4">
+              Contact Information API
+            </h3>
+            <CodeBlock 
+              code={contactCode}
+              language="javascript"
+              animated={!isContactVisited}
+              speed={25}
+            />
+          </div>
         </motion.div>
       </div>
 
@@ -405,6 +293,8 @@ console.log("Ready to collaborate");`;
           </div>
         </div>
       </motion.div>
+
+      {/* Reset Button */}
     </motion.div>
   );
 };

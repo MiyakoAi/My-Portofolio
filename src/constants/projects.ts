@@ -29,11 +29,11 @@ export const projects: Project[] = [
     startDate: '2024-01',
     endDate: '2024-06',
     highlights: [
-      'Microservices architecture dengan Docker',
-      'Redis caching untuk performance optimization',
-      'JWT authentication dan authorization',
-      'Real-time notifications dengan WebSocket',
-      'Comprehensive API documentation dengan Swagger'
+      'End-to-end message encryption',
+      'Multiple chat rooms support',
+      'File dan image sharing',
+      'Online status indicators',
+      'Message history dan search'
     ]
   },
   {
@@ -51,11 +51,14 @@ export const projects: Project[] = [
     startDate: '2024-03',
     endDate: '2024-08',
     highlights: [
-      'Real-time collaboration dengan Socket.io',
-      'Drag-and-drop task management',
-      'File upload dan sharing system',
-      'Advanced reporting dashboard',
-      'Role-based access control'
+      'Building RESTful APIs for library management',
+      'Integrated with MySQL for data storage',
+      'Apply role system to application',
+      'Using JWT for authentication and authorization',
+      'Using GCP for deployment',
+      'Using Cloud Run for serverless architecture',
+      'Using CD/CI for automated testing and deployment',
+      'Using Artifact Registry for package management'
     ]
   },
   {
@@ -82,11 +85,15 @@ export const projects: Project[] = [
     startDate: 'Sep 2024',
     endDate: 'Jan 2025',
     highlights: [
-      'End-to-end message encryption',
-      'Multiple chat rooms support',
-      'File dan image sharing',
-      'Online status indicators',
-      'Message history dan search'
+      'building restfull Api for Mobile Development',
+      'Integrated AI models into backend services',
+      'Using JWT for authentication and authorization',
+      'Using GCP for deployment',
+      'Using Cloud Run for serverless architecture',
+      'Using CD/CI for automated testing and deployment',
+      'Using Artifact Registry for package management',
+      'Using MySQL for data storage',
+      'Using Docker for containerization',
     ]
   }
 ];

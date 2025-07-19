@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, ChevronDown, ChevronUp } from 'lucide-react';
+import { usePageVisit } from '../context/PageVisitContext';
 import CodeBlock from '../components/ui/CodeBlock';
 import TechIcon from '../components/ui/TechIcon';
 import CompanyLogo from '../components/ui/CompanyLogo';
@@ -11,6 +12,21 @@ import { experiences } from '../constants/experience';
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'bio' | 'experience' | 'skills'>('bio');
   const [expandedExperience, setExpandedExperience] = useState<string | null>(null);
+  const { isPageVisited, markPageAsVisited } = usePageVisit();
+  
+  const isAboutVisited = isPageVisited('about');
+  
+  useEffect(() => {
+    // Only mark as visited after animations have time to run
+    if (!isAboutVisited) {
+      // Give time for CodeBlock animations to start and complete
+      const timer = setTimeout(() => {
+        markPageAsVisited('about');
+      }, 5000); // Increased to 5 seconds for longer code blocks
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isAboutVisited, markPageAsVisited]);
 
   const handleDownloadCV = () => {
     const link = document.createElement('a');
@@ -143,7 +159,7 @@ console.log(developer.getBio());`;
             <CodeBlock 
               code={bioCode} 
               language="javascript" 
-              animated={true}
+              animated={!isAboutVisited}
               speed={15}
             />
             

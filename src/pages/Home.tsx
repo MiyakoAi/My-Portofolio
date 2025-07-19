@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTypewriter } from '../hooks/useTypewriter';
+import { usePageVisit } from '../context/PageVisitContext';
 import Terminal from '../components/ui/Terminal';
 import CodeBlock from '../components/ui/CodeBlock';
 import SEO from '../components/common/SEO';
@@ -10,22 +11,47 @@ import { personalInfo } from '../constants/personalInfo';
 const Home: React.FC = () => {
   const [showTerminal, setShowTerminal] = useState(false);
   const [startSubtitle, setStartSubtitle] = useState(false);
+  const [hasRunInitialAnimation, setHasRunInitialAnimation] = useState(false);
+  const { isPageVisited, markPageAsVisited } = usePageVisit();
+  
+  const isHomeVisited = isPageVisited('home');
+  
+  useEffect(() => {
+    // Only skip animations on the very first load if already visited
+    if (isHomeVisited && !hasRunInitialAnimation) {
+      setStartSubtitle(true);
+      setShowTerminal(true);
+      setHasRunInitialAnimation(true);
+    }
+    // Don't mark as visited here - let the animations complete first
+  }, [isHomeVisited, hasRunInitialAnimation]);
   
   const welcomeText = `Hello Sekai, I'm ${personalInfo.name}`;
   const subtitleText = `Lazy Programmer and Skroll Enjiner`/*personalInfo.title*/;
 
   const { displayText: welcomeDisplay, isComplete: welcomeComplete } = useTypewriter({
     text: welcomeText,
-    speed: 50,
+    speed: 50, // Always use normal speed for better UX
     onComplete: () => {
-      setTimeout(() => setStartSubtitle(true), 500);
-      setTimeout(() => setShowTerminal(true), 1000);
+      if (!hasRunInitialAnimation) {
+        setTimeout(() => setStartSubtitle(true), 500);
+        setTimeout(() => setShowTerminal(true), 1000);
+        // Mark page as visited after all animations complete (longer delay)
+        setTimeout(() => {
+          markPageAsVisited('home');
+          setHasRunInitialAnimation(true);
+        }, 5000);
+      } else {
+        // On return visits, still show subtitle and terminal
+        setStartSubtitle(true);
+        setShowTerminal(true);
+      }
     }
   });
 
   const { displayText: subtitleDisplay, isComplete: subtitleComplete } = useTypewriter({
-    text: startSubtitle ? subtitleText : '',
-    speed: 50,
+    text: (startSubtitle || hasRunInitialAnimation) ? subtitleText : '',
+    speed: 50, // Always use normal speed
     delay: 0
   });
 
@@ -34,7 +60,7 @@ const developer = {
   name: "${personalInfo.name}",
   role: "${personalInfo.title}",
   location: "${personalInfo.location}",
-  passions: ["Skroll enjiner", "Lazy Programmer", "Ai Promtting"],
+  passions: ["Skroll Enjiner", "Lazy Programmer", "Ai Promptting"],
   
   getIntroduction() {
     return \`Hi! I'm a ${personalInfo.title} who loves building 
@@ -48,8 +74,8 @@ console.log(developer.getIntroduction());`;
     <>
       <SEO 
         title="Home"
-        description="Portfolio Backend Developer - Full Stack Web Developer dengan keahlian dalam Node.js, React, dan teknologi modern lainnya"
-        keywords="backend developer, full stack developer, portfolio, web developer, node.js, react, javascript"
+        description="Portfolio"
+        keywords="backend developer JavaScript"
         image="https://my-portofolio-da5i.vercel.app/og-image.png"
       />
       <div className="min-h-screen flex flex-col justify-center items-center p-4">
@@ -63,39 +89,43 @@ console.log(developer.getIntroduction());`;
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-6xl font-bold">
             <span className="text-terminal-green">{welcomeDisplay}</span>
-            {!welcomeComplete && <span className="animate-blink">█</span>}
+            {welcomeDisplay.length > 0 && !welcomeComplete && (
+              <span className="animate-blink">█</span>
+            )}
           </h1>
           
           {startSubtitle && (
             <h2 className="text-xl md:text-2xl text-terminal-blue">
               <span>{subtitleDisplay}</span>
-              {!subtitleComplete && <span className="animate-blink">█</span>}
+              {subtitleDisplay.length > 0 && !subtitleComplete && (
+                <span className="animate-blink">█</span>
+              )}
             </h2>
           )}
         </div>
 
         {/* Code Introduction */}
-        {subtitleComplete && (
+        {(subtitleComplete || hasRunInitialAnimation) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            transition={{ delay: hasRunInitialAnimation ? 0 : 0.3, duration: 0.6 }}
           >
             <CodeBlock 
               code={codeExample}
               language="javascript"
-              animated={true}
+              animated={!hasRunInitialAnimation}
               speed={20}
             />
           </motion.div>
         )}
 
         {/* Interactive Terminal */}
-        {showTerminal && (
+        {(showTerminal || hasRunInitialAnimation) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: hasRunInitialAnimation ? 0 : 0.5, duration: 0.6 }}
             className="space-y-4"
           >
             <h3 className="text-lg text-terminal-yellow text-center">
