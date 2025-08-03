@@ -19,15 +19,14 @@ export const projects: Project[] = [
   {
     id: '1',
     title: 'Forum Community',
-    description: 'anonimous forum community real time end-to-end encrypted',
-    longDescription: ' - ',
+    description: 'Anonimous forum community real time end-to-end encrypted',
+    longDescription: 'This is my independent project, this is a big project that I first made by alone. Support me to finish this project.',
     technologies: ['Node.js', 'Express', 'Socket', 'Mongodb', 'JWT'],
     categories: ['api'],
     status: 'in-progress',
     featured: true,
     // githubUrl: 'https://github.com/MiyakoAi/ecommerce-api',
-    startDate: '2024-01',
-    endDate: '2024-06',
+    startDate: 'Jun 2025',
     highlights: [
       'End-to-end message encryption',
       'Multiple chat rooms support',
@@ -39,7 +38,6 @@ export const projects: Project[] = [
   {
     id: '2',
     title: 'Library App',
-
     description: 'Lecture assignment for the Software Engineering Component course',
     longDescription: 'Building Backend from app library.',
     technologies: ['Node.js', 'MySQL', 'Express'],
@@ -48,8 +46,8 @@ export const projects: Project[] = [
     featured: false,
     githubUrl: 'https://github.com/MiyakoAi/backend-library_app',
     liveUrl: 'https://library-apps-plum.vercel.app/',
-    startDate: '2024-03',
-    endDate: '2024-08',
+    startDate: 'May 2025',
+    endDate: 'May 2025',
     highlights: [
       'Building RESTful APIs for library management',
       'Integrated with MySQL for data storage',
@@ -64,7 +62,8 @@ export const projects: Project[] = [
   {
     id: '3',
     title: 'Mently',
-    imageUrls: ['/assets/projects/1737340417551_Page_01.png',
+    imageUrls: [
+            '/assets/projects/1737340417551_Page_01.png',
             '/assets/projects/1737340417551_Page_02.png', 
             '/assets/projects/1737340417551_Page_03.png', 
             '/assets/projects/1737340417551_Page_04.png', 
