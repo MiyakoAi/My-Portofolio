@@ -24,10 +24,10 @@ const Contact: React.FC = () => {
 
   const contactCode = `// Contact Information
 const contactInfo = {
-  github: "MiyakoAi",
+  name: "Mugni Adji",
   email: "${personalInfo.email}",
   location: "${personalInfo.location}",
-  timezone: "UTC+7",
+  timezone: "UTC+8",
   
   preferredContact: "email", // Primary communication method
   responseTime: "24-48 hours", // Typical response time
@@ -123,7 +123,7 @@ console.log("Ready to collaborate");`;
           $ curl contact.json
         </h1>
         <p className="text-terminal-text opacity-80">
-          Let's connect and build something amazing together
+          Just Contact me if you want to connect and build something
         </p>
       </div>
 

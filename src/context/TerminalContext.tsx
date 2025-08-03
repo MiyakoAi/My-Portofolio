@@ -27,7 +27,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [history, setHistory] = useState<TerminalLine[]>([
     {
       id: '1',
-      output: `Welcome to ${personalInfo.name}'s Portfolio Terminal v2.0`,
+      output: `Welcome to Terminal v2.0`,
       type: 'success',
       timestamp: new Date()
     },
@@ -203,7 +203,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         addLine({
           output: `
               ╔═════════════════════════════════════╗
-              ║             I am Gonna..            ║
+              ║             My Bini                 ║
               ║                                     ║
               ║     Hatsune Miku is My Wife         ║
               ║     Hatsune Miku is Beautifull      ║
@@ -217,10 +217,25 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       case 'joke': {
         const jokes = [
-          "Why do programmers prefer dark mode?\nBecause light attracts bugs!",
-          "How many programmers does it take to change a light bulb?\nNone. That's a hardware problem!",
-          "Why do Java developers wear glasses?\nBecause they can't C#",
-          "There are only 10 types of people in the world:\nthose who understand binary and those who don't!"
+          "Ular ular apa yang lurus?\nUlar makan linggis hahaha\nketawa dong gue lagi ngelawak ini",
+          "Sapi, sapi apa yang warna biru?\nSapidol hahahaha\nKetawa gak loooo?!",
+          "Kenapa ayam menyebrang jalan?\nKarena mau ke seberang hahaha\nKetawa dong gue lagi ngelawak ini",
+          "Kenapa kucing suka tidur di keyboard?\nKarena dia mau nge-'cat' hahaha\nBener gak lo?",
+          "Ikan, ikan apa yang bisa terbang?\nIkan gabus!\nKetawa, dong! Gak lucu ya? Ya udah, yang penting usaha.",
+          "Burung, burung apa yang bisa ngilang?\nBurung-burung-an! Hahaha, gak lucu ya?",
+          "Kuda, kuda apa yang bikin capek?\nKuda-ku rangkul, hahahaha\nCapek kan, ya?",
+          "Gajah, gajah apa yang paling baik hati?\nGajah-an banget deh, masa gajah baik hati? Hahaha, ya kali.",
+          "Kura-kura, kura-kura apa yang paling ganteng?\nKura-kura-an muka lo, gantengan gue! Hahaha, marah ya?",
+          "Naga, naga apa yang paling keren?\nNaga-bungkus nasi, biar makanannya gak tumpah! Hahaha, ketawa dong!",
+          "Sebutin, sebutin nama buah yang gak bisa dimakan!\nBuahahaha, lu kira gue dukun? Hahaha.",
+          "Ikan, ikan apa yang hobinya kentut?\nIkan-tutan, terus kentutnya bau banget! Hahaha, kok gitu ya?",
+          "Anjing, anjing apa yang lurus?\nAnjing, anjingan lo! Ini bukan anjing beneran! Hahaha.",
+          "Tikus, tikus apa yang hobinya nge-gym?\nTikus, tikus-bang! Hahaha.",
+          "Kenapa nyamuk suka sama darah?\nKarena nyamuk 'malu' kalau suka sama kamu, hahahaha.\nKetawa dong, jangan malu-malu!",
+          "Monyet, monyet apa yang bisa ngomong?\nMonyet-monyet yang ada di film, hahahaha.\nGak lucu ya?",
+          "Kenapa cicak jatuh dari dinding?\nKarena cicak tidak bisa terbang, hahahaha.\nYa kali.",
+          "Gajah, gajah apa yang paling cerdas?\nGajah-a-deh, gak ada gajah yang cerdas, hahahaha.\nSemua gajah sama kok!",
+          "Ikan, ikan apa yang bisa bikin nangis?\nIkan, ikan gak bisa bikin nangis, yang bikin nangis itu kalau kamu putus, hahahaha.\nBaper gak?"
         ];
         addLine({
           output: jokes[Math.floor(Math.random() * jokes.length)],
@@ -231,10 +246,13 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       case 'quote': {
         const quotes = [
-          '"Code is like humor. When you have to explain it, it\'s bad." - Cory House',
-          '"First, solve the problem. Then, write the code." - John Johnson',
-          '"The best error message is the one that never shows up." - Thomas Fuchs',
-          '"Experience is the name everyone gives to their mistakes." - Oscar Wilde'
+          "Teknologi adalah upaya manusia untuk menulis ulang hukum alam—tetapi semakin dalam kita mengukir,\nsemakin jelas terlihat: kita hanya menorehkan tanda tanya di atas takdir yang sudah tertulis..",
+          "Kematian bukanlah kegagalan manusia terhadap hukum alam,\nmelainkan tanda bahwa hidup adalah hadiah yang diberi batas—dan justru dalam batas itulah makna ditemukan.",
+          "Manusia bukan hanya makhluk individu, tapi juga bagian dari masyarakat dan hukum alam.\nKebahagiaan pribadi tidak bisa mengabaikan tanggung jawab terhadap keturunan dan norma sosial.",
+          'Kita membangun peradaban di atas keyakinan bahwa hukum alam bisa direvisi—hingga suatu hari,\nbanjir besar datang mengingatkan:\n"yang kita ubah hanyalah diri kita sendiri, bukan aturan semesta."',
+          "Kita menyebutnya 'inovasi' ketika mencoba membekukan waktu, menghidupkan yang mati, atau menciptakan surga di bumi\npadahal itu hanyalah cara lain untuk berlari di tempat, sambil langit menertawakan drama kita.",
+          "Kita adalah cara alam mengenali dirinya sendiri—dan ketika kita memberontak,\nitu hanyalah alam yang sedang menari dengan gerakan yang kita sebut 'kemajuan'.",
+          'Kita tidak pernah benar-benar "menang" melawan hukum alam karena hukum alam bukanlah musuh yang bisa dikalahkan, melainkan fondasi eksistensi itu sendiri. '
         ];
         addLine({
           output: quotes[Math.floor(Math.random() * quotes.length)],

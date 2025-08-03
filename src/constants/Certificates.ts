@@ -218,21 +218,6 @@ export const certificates: Certificate[] = [
   },
   {
     id: '15',
-    name: 'A Practical Introduction to Cloud Computing',
-    issuer: 'EC-Council',
-    issueDate: 'June 2024',
-    // expiryDate: 'September 2027',
-    credentialId: 'b001f157-1769-4d29-8401-35f0c28a23d5',
-    imageUrl: '/assets/certificates/enocilCloud.png',
-    verificationUrl: 'https://codered.eccouncil.org/certificate/b001f157-1769-4d29-8401-35f0c28a23d5?logged=true',
-    description: 'A Practical Introduction to Cloud Computing',
-    skills: ['Cloud Computing', 'Virtualization', 'Cloud Services'],
-    categories: ['cloud'],
-    featured: false,
-    status: 'active'
-  },
-  {
-    id: '16',
     name: 'Android Bug Bounty Hunting: Hunt Like a Rat',
     issuer: 'EC-Council',
     issueDate: 'June 2024',
@@ -247,7 +232,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '17',
+    id: '16',
     name: 'Digital Forensics Essentials (DFE)',
     issuer: 'EC-Council',
     issueDate: 'June 2024',
@@ -262,7 +247,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '18',
+    id: '17',
     name: 'Introduction to Dark Web, Anonymity, and Cryptocurrency',
     issuer: 'EC-Council',
     issueDate: 'June 2024',
@@ -277,7 +262,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '19',
+    id: '18',
     name: 'Network Defense Essentials (NDE)',
     issuer: 'EC-Council',
     issueDate: 'June 2024',
@@ -292,7 +277,7 @@ export const certificates: Certificate[] = [
     status: 'active'
   },
   {
-    id: '20',
+    id: '19',
     name: 'Certification of Completeion English Course',
     issuer: 'Master of English Course',
     issueDate: 'December 2021',

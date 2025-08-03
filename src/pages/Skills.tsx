@@ -130,8 +130,8 @@ console.log("Skills last updated:", new Date().toISOString());`;
         
         {/* Terminal-style progress visualization */}
         <div className="mt-2 font-mono text-xs text-terminal-green opacity-0 group-hover:opacity-100 transition-opacity">
-          {'█'.repeat(Math.floor(skill.level / 5))}
-          {'░'.repeat(20 - Math.floor(skill.level / 5))}
+          {'█'.repeat(Math.floor(skill.level / 5))}          
+          {'+'.repeat(20 - Math.floor(skill.level / 5))}
           <span className="ml-2 text-terminal-yellow">[{skill.level}/100]</span>
         </div>
       </motion.div>

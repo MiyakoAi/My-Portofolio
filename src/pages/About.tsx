@@ -65,7 +65,7 @@ class Developer {
   getCurrentFocus() {
     return [
       "Building robust APIs with Node.js & Express",
-      "Building database structures with MongoDB and MySQL",
+      "Building database structures with MongoDB, MySQL, and Firebase",
       "Prompt enjiner",
     ];
   }
@@ -84,8 +84,10 @@ const developer = new Developer();
 console.log(developer.getBio());`;
 
   const renderSkillBar = (skill: any) => {
+
     const bars = '█'.repeat(Math.floor(skill.level / 5));
-    const emptyBars = '░'.repeat(20 - Math.floor(skill.level / 5));
+
+    const emptyBars = '#'.repeat(20 - Math.floor(skill.level / 5));
     
     return (
       <motion.div
@@ -270,7 +272,7 @@ console.log(developer.getBio());`;
 
                         {/* Technologies */}
                         <div>
-                          <h4 className="text-terminal-yellow text-sm font-semibold mb-2">Technologies Used:</h4>
+                          <h4 className="text-terminal-yellow text-sm font-semibold mb-2">Skills Used:</h4>
                           <div className="flex flex-wrap gap-2">
                             {exp.technologies.map((tech) => (
                               <span
