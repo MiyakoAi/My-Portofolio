@@ -23,6 +23,7 @@ export const skillCategories: SkillCategory[] = [
       { name: 'Express.js', level: 70, category: 'framework', yearsOfExperience: 1 },
       { name: 'MongoDB', level: 50, category: 'database', yearsOfExperience: 1 },
       { name: 'Python', level: 40, category: 'language', yearsOfExperience: 1 },
+      { name: 'TypeScript', level: 40, category: 'language', yearsOfExperience: 1 },
       { name: 'Redis', level: 30, category: 'caching', yearsOfExperience: 1 }
     ]
   },
@@ -30,10 +31,11 @@ export const skillCategories: SkillCategory[] = [
     name: 'Frontend Development',
     icon: '',
     skills: [
-      { name: 'HTML/CSS', level: 95, category: 'markup', yearsOfExperience: 1 },
+      { name: 'HTML', level: 95, category: 'markup', yearsOfExperience: 1 },
       { name: 'JavaScript', level: 80, category: 'language', yearsOfExperience: 1 },
+      { name: 'CSS', level: 70, category: 'styling', yearsOfExperience: 1 },
+      { name : 'Bootstrap', level: 10, category: 'styling', yearsOfExperience: 1 },
       { name: 'Tailwind CSS', level: 10, category: 'styling', yearsOfExperience: 1 },
-      { name: 'TypeScript', level: 5, category: 'language', yearsOfExperience: 1 },
       { name: 'React', level: 5, category: 'framework', yearsOfExperience: 1 },
     ]
   },
@@ -49,7 +51,7 @@ export const skillCategories: SkillCategory[] = [
     ]
   },
   {
-    name: 'Other Skills',
+    name: 'Soft Skills',
     icon: '',
     skills: [
       { name: 'Solving Problem', level: 70, category: 'self' },

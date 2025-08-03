@@ -51,6 +51,12 @@ const TechIcon: React.FC<TechIconProps> = ({ technology, size = 'md', className 
       'Socket': '/icons/Socket/socketio-icon.svg',
       'Nginx': '/icons/Nginx/nginx-icon.svg',
       'PHP': '/icons/Php/php-icon.svg',
+      'Bootstrap': 'icons/Boostrap/Bootstrap_logo.svg.png',
+      'Network': '/icons/SoftSkills/networking.png',
+      'Solving Problem': '/icons/SoftSkills/SolvingProblem.png',
+      'Communication': '/icons/SoftSkills/communication.png',
+      'Team Work': '/icons/SoftSkills/TeamWork.png',
+      'JQuery': '/icons/JQuery/jquery-icon.svg',
     };
     
     return iconMap[tech] || null;

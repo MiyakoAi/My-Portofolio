@@ -28,9 +28,9 @@ export const experiences: Experience[] = [
       'develop internal systems',
       'helpig employees',
     ],
-    technologies: ['HTML', 'CSS', "Team Work"],
+    technologies: ['JQuery', "Solving Problem", "Team Work"],
     achievements: [
-      '-',
+      'gain new experience in the company',
     ]
   },
   {
@@ -50,7 +50,7 @@ export const experiences: Experience[] = [
       'Implement authentication and authorization systems',
       'Write comprehensive API documentation'
     ],
-    technologies: ['Node.js', 'Express.js', 'MySQL', 'Docker', 'GCP', 'Git'],
+    technologies: ['Node.js', 'Express.js', 'MySQL', 'Docker', 'GCP', 'Git', "Solving Problem", "Team Work", "Communication"],
     achievements: [
       'complete the project on time',
     ]

@@ -14,7 +14,7 @@ export const useTerminal = () => {
   const [history, setHistory] = useState<TerminalLine[]>([
     {
       id: '1',
-      output: `Welcome to ${personalInfo.name}'s Portfolio Terminal`,
+      output: `Welcome to Terminal`,
       type: 'success',
       timestamp: new Date()
     },

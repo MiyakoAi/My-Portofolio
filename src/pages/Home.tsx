@@ -60,11 +60,11 @@ const developer = {
   name: "${personalInfo.name}",
   role: "${personalInfo.title}",
   location: "${personalInfo.location}",
-  passions: ["Skroll Enjiner", "Lazy Programmer", "Ai Promptting"],
+  passions: ["Skroll Enjiner", "Lazy Programmer", "Ai Prompting"],
   
   getIntroduction() {
     return \`Hi! I'm a ${personalInfo.title} who loves building 
-    robust backend systems and with Ai :v.\`;
+    robust backend systems and with Ai.\`;
   }
 };
 

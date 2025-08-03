@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Code, Database, Server, Wrench } from 'lucide-react';
+import { ChevronDown, ChevronUp, Code, Contact, Database, Server, UserCircle, Wrench } from 'lucide-react';
 import { usePageVisit } from '../context/PageVisitContext';
 import { skillCategories } from '../constants/skills';
 import type { Skill, SkillCategory } from '../constants/skills';
@@ -87,7 +87,7 @@ console.log("Skills last updated:", new Date().toISOString());`;
       case 'devops & tools':
         return <Wrench className="w-6 h-6" />;
       default:
-        return <Database className="w-6 h-6" />;
+        return <UserCircle className="w-6 h-6" />;
     }
   };
 

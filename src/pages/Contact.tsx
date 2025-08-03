@@ -105,8 +105,7 @@ console.log("Ready to collaborate");`;
       icon: <MapPin className="w-6 h-6" />,
       label: 'Location',
       value: personalInfo.location,
-      href: null,
-      copyable: true
+      href: 'https://www.google.com/maps/place/Makassar,+Kota+Makassar,+Sulawesi+Selatan/@-5.1114895,119.4026275,34640',
     }
   ];
 
