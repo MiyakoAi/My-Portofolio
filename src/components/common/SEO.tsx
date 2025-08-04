@@ -17,7 +17,7 @@ const SEO: React.FC<SEOProps> = ({
   image = '/Tumbnail.png'
 }) => {
   const location = useLocation();
-  const baseUrl = 'https://my-portofolio-tau-ten.vercel.app'; // Updated with your Vercel domain
+  const baseUrl = 'https://mugniadji.com/'; // Updated with your Vercel domain
   const currentUrl = `${baseUrl}${location.pathname}`;
   const fullImageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
   

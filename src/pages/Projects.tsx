@@ -191,7 +191,7 @@ const Projects: React.FC = () => {
         title="Projects"
         description="Portofolio project - Kumpulan project backend development, API development, dan full stack applications"
         keywords="projects, backend projects, api development, full stack projects, node.js projects"
-        image="https://my-portofolio-tau-ten.vercel.app/assets/projects/1737340417551_Page_01.png"
+        image="https://mugniadji.com/assets/projects/1737340417551_Page_01.png"
       />
       <motion.div
         initial={{ opacity: 0, y: 20 }}

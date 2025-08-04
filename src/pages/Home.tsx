@@ -76,7 +76,7 @@ console.log(developer.getIntroduction());`;
         title="Home"
         description="Portfolio"
         keywords="backend developer JavaScript"
-        image="https://my-portofolio-tau-ten.vercel.app/Tumbnail.png"
+        image="https://mugniadji.com/Tumbnail.png"
       />
       <div className="min-h-screen flex flex-col justify-center items-center p-4">
       <motion.div
