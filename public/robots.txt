@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://my-portofolio-tau-ten.vercel.app/sitemap.xml
+Disallow: /.well-known/
