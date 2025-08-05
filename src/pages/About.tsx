@@ -30,8 +30,8 @@ const About: React.FC = () => {
 
   const handleDownloadCV = () => {
     const link = document.createElement('a');
-    link.href = '/Portofolio2.pdf';
-    link.download = 'Mugni_Adji_CV.pdf';
+    link.href = '/MugniAdjiCV.pdf';
+    link.download = '[CV]_Mugni-Adji.pdf';
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
