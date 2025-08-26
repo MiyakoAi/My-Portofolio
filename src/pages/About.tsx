@@ -5,9 +5,9 @@ import { usePageVisit } from '../context/PageVisitContext';
 import CodeBlock from '../components/ui/CodeBlock';
 import TechIcon from '../components/ui/TechIcon';
 import CompanyLogo from '../components/ui/CompanyLogo';
-import { skillCategories } from '../constants/skills';
 import { personalInfo } from '../constants/personalInfo';
 import { experiences } from '../constants/experience';
+import { aboutSkillCategories } from '../constants/skills';
 
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'bio' | 'experience' | 'skills'>('bio');
@@ -312,26 +312,41 @@ console.log(developer.getBio());`;
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            className="space-y-8"
           >
-            {skillCategories.map((category, categoryIndex) => (
-              <motion.div
-                key={category.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: categoryIndex * 0.1 }}
-                className="bg-gray-900 border border-terminal-border rounded-lg p-6"
-              >
-                <h3 className="text-lg font-semibold text-terminal-yellow mb-4 flex items-center">
-                  <span className="mr-2">{category.icon}</span>
-                  {category.name}
-                </h3>
-                
-                <div className="space-y-3">
-                  {category.skills.map(renderSkillBar)}
-                </div>
-              </motion.div>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {aboutSkillCategories.map((category, categoryIndex) => (
+                <motion.div
+                  key={category.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: categoryIndex * 0.1 }}
+                  className="bg-gray-900 border border-terminal-border rounded-lg p-6"
+                >
+                  <h3 className="text-lg font-semibold text-terminal-yellow mb-4 flex items-center">
+                    <span className="mr-2">{category.icon}</span>
+                    {category.name}
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    {category.skills.map(renderSkillBar)}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* Skills Assessment Disclaimer */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="bg-gray-800 border border-terminal-border rounded-lg p-4 mt-8"
+            >
+              <p className="text-gray-400 text-sm text-center italic font-mono">
+                * The 0-100 scale assessment is based on evaluations from AI, peer reviews, 
+                and expert testing feedback.
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </div>

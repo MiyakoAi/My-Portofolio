@@ -51,12 +51,38 @@ const TechIcon: React.FC<TechIconProps> = ({ technology, size = 'md', className 
       'Socket': '/icons/Socket/socketio-icon.svg',
       'Nginx': '/icons/Nginx/nginx-icon.svg',
       'PHP': '/icons/Php/php-icon.svg',
-      'Bootstrap': 'icons/Boostrap/Bootstrap_logo.svg.png',
+      'Bootstrap': '/icons/Boostrap/Bootstrap_logo.svg.png',
       'Network': '/icons/SoftSkills/networking.png',
       'Solving Problem': '/icons/SoftSkills/SolvingProblem.png',
       'Communication': '/icons/SoftSkills/communication.png',
       'Team Work': '/icons/SoftSkills/TeamWork.png',
       'JQuery': '/icons/JQuery/jquery-icon.svg',
+      'jQuery': '/icons/JQuery/jquery-icon.svg',
+      // Newly added mappings
+      'n8n': '/icons/n8n/n8n.svg',
+      'N8N': '/icons/n8n/n8n.svg',
+      'PostgreSQL': '/icons/PostgreSQL/postgresql-icon.svg',
+      'Postgres': '/icons/PostgreSQL/postgresql-icon.svg',
+      // Design Tools
+      'Figma': '/icons/Figma/figma-icon.svg',
+      'Canva': '/icons/Canva/canva-icon.svg',
+      // Adobe Creative Suite
+      'Photoshop': '/icons/Adobe/Adobe_Photoshop.svg',
+      'Adobe Photoshop': '/icons/Adobe/Adobe_Photoshop.svg',
+      'Lightroom': '/icons/Adobe/Adobe_Lightroom.svg',
+      'Adobe Lightroom': '/icons/Adobe/Adobe_Lightroom.svg',
+      // Cloud Services
+      'Firebase': '/icons/Firebase/firebase-icon.svg',
+      // Microsoft Office Suite
+      'MS Word': '/icons/MicrosoftOffice/Microsoft_Word.svg',
+      'MS Excel': '/icons/MicrosoftOffice/Microsoft_Excel.svg',
+      'MS PowerPoint': '/icons/MicrosoftOffice/Microsoft_PowerPoint.svg',
+      'Microsoft Word': '/icons/MicrosoftOffice/Microsoft_Word.svg',
+      'Microsoft Excel': '/icons/MicrosoftOffice/Microsoft_Excel.svg',
+      'Microsoft PowerPoint': '/icons/MicrosoftOffice/Microsoft_PowerPoint.svg',
+      'Word': '/icons/MicrosoftOffice/Microsoft_Word.svg',
+      'Excel': '/icons/MicrosoftOffice/Microsoft_Excel.svg',
+      'PowerPoint': '/icons/MicrosoftOffice/Microsoft_PowerPoint.svg',
     };
     
     return iconMap[tech] || null;

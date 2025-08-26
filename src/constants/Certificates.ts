@@ -208,7 +208,7 @@ export const certificates: Certificate[] = [
     issueDate: 'June 2024',
     // expiryDate: 'September 2027',
     credentialId: 'b001f157-1769-4d29-8401-35f0c28a23d5',
-    imageUrl: '/assets/certificates/balajarWeb_Page_1.png',
+    imageUrl: '/assets/certificates/enocilCloud.png',
     verificationUrl: 'hhttps://codered.eccouncil.org/certificate/b001f157-1769-4d29-8401-35f0c28a23d5?logged=true',
     description: 'A Practical Introduction to Cloud Computing',
     skills: ['Cloud Computing', 'Virtualization', 'Cloud Services'],

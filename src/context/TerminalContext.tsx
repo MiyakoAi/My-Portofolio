@@ -203,14 +203,15 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         addLine({
           output: `
               ╔═════════════════════════════════════╗
-              ║             My Bini                 ║
+              ║       Ini adalah My Kisah           ║
               ║                                     ║
               ║     Hatsune Miku is My Wife         ║
               ║     Hatsune Miku is Beautifull      ║
               ║     Hatsune Miku is My Motivasion   ║
               ║                                     ║
               ║   "Tolong jangan claim istri saya!" ║
-              ╚═════════════════════════════════════╝`,
+              ╚═════════════════════════════════════╝
+              `,
           type: 'output'
         });
         break;
